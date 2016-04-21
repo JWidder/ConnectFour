@@ -1,2 +1,74 @@
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
+#include "gsl_assert.h"
+
+#include "ConnectFour.hpp"
+
+using namespace tlCF;
+
+TEST_CASE("default board is empty", "[board]") {
+    Board b;
+    for (uint32_t i = 0; i < Board::collumn_size; ++i) {
+        for (uint32_t k = 0; k < Board::row_size; ++k) {
+            CHECK(b.GetStatus(k, i) == empty);
+        }
+    }
+}
+
+BoardFieldStatus Flip(BoardFieldStatus f) {
+    Expects(f == red || f == yellow);
+    BoardFieldStatus result = f;
+    if (f == red) result = yellow;
+    else if (f == yellow) result = red;
+    Ensures(result != f);
+    Ensures(result == red || result == yellow);
+    return result;
+}
+
+TEST_CASE("throwing in a color works", "[board]") {
+    Board b;
+    BoardFieldStatus color = red;
+    for (uint32_t i = 0; i < Board::collumn_size; ++i) {
+        for (uint32_t k = 0; k < Board::row_size; ++k) {
+            CHECK(b.GetStatus(k, i) == empty);
+            CHECK(b.ThrowIn(i, color) == true);
+            CHECK(b.GetStatus(k, i) == color);
+            color = Flip(color);
+        }
+    }
+}
+
+TEST_CASE("clearing the board works", "[board]") {
+    Board b;
+    BoardFieldStatus color = red;
+    b.ThrowIn(4, color);
+    CHECK(b.GetStatus(0, 4) == color);
+    b.Clear();
+    CHECK(b.GetStatus(0, 4) == empty);
+}
+
+TEST_CASE("Testing the empty board means continue", "[board]") {
+    Board b;
+    CHECK(b.Test() == VictoryStatus::Continue);
+}
+
+TEST_CASE("Full Board means draw", "[board]") {
+    Board b;
+    //fill board
+    std::vector<std::vector<int>> data = { {1,1,1,2,1,1},
+        {1,1,1,2,1,1},
+        {1,1,2,2,2,1},
+        {2,2,2,1,2,2},
+        {1,1,2,2,2,1},
+        {1,1,1,2,1,1},
+        {1,1,1,2,1,1}
+    };
+    uint32_t collumn = 0;
+    for (const auto& i : data) {
+        for (const auto& k : i) {
+            b.ThrowIn(collumn, static_cast<BoardFieldStatus>(k));
+        }
+        collumn += 1;
+    }
+    CHECK(b.Test() == VictoryStatus::Draw);
+}
