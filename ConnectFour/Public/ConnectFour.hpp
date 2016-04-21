@@ -37,6 +37,7 @@ namespace tlCF {
 
         VictoryStatus TestRows() const;
         VictoryStatus TestCollumns() const;
+        VictoryStatus TestDiagonals() const;
 
         uint32_t data_[3];
     };

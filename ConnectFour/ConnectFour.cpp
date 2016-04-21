@@ -64,6 +64,26 @@ VictoryStatus tlCF::Board::TestCollumns() const {
     return VictoryStatus::Continue;
 }
 
+VictoryStatus tlCF::Board::TestDiagonals() const {
+    for (unsigned int i = 0; i < collumn_count - 4; ++i) {
+        for (unsigned int k = 0; k < row_count - 4; ++k) {
+            if (GetStatus(k, i) != empty &&
+                    GetStatus(k, i) == GetStatus(k + 1, i + 1) &&
+                    GetStatus(k, i) == GetStatus(k + 2, i + 2) &&
+                    GetStatus(k, i) == GetStatus(k + 3, i + 3)) {
+                return static_cast<VictoryStatus>(GetStatus(k, i));
+            }
+            if (GetStatus(i, k + 3) != empty &&
+                    GetStatus(i, k + 3) == GetStatus(i + 1, k + 2) &&
+                    GetStatus(i, k + 3) == GetStatus(i + 2, k + 1) &&
+                    GetStatus(i, k + 3) == GetStatus(i + 3, k)) {
+                return static_cast<VictoryStatus>(GetStatus(i, k + 3));
+            }
+        }
+    }
+    return VictoryStatus::Continue;
+}
+
 tlCF::Board::Board() {
     Clear();
 }
@@ -117,6 +137,8 @@ VictoryStatus tlCF::Board::Test() const {
     if (rows != VictoryStatus::Continue) return rows;
     auto collumns = TestCollumns();
     if (collumns != VictoryStatus::Continue) return collumns;
+    auto diag = TestDiagonals();
+    if (diag != VictoryStatus::Continue) return diag;
     bool collumnsFull = true;
     for (int i = 0; i < collumn_count; ++i) {
         collumnsFull = collumnsFull && (!CanThrowIn(i)); //collumns full will get false if CanThrowIn is true for any collumn

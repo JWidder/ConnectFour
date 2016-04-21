@@ -73,7 +73,7 @@ TEST_CASE("Full Board means draw", "[board]") {
     CHECK(b.Test() == VictoryStatus::Draw);
 }
 
-TEST_CASE("4 in a row are win") {
+TEST_CASE("4 in a row win") {
     Board b;
     for (unsigned int i = 0; i < 4; ++i) {
         b.ThrowIn(i, red);
@@ -81,11 +81,33 @@ TEST_CASE("4 in a row are win") {
     CHECK(b.Test() == VictoryStatus::VictoryRed);
 }
 
-TEST_CASE("4 in a collumn are win") {
+TEST_CASE("4 in a collumn win") {
     Board b;
     b.ThrowIn(5, red);
     for (unsigned int i = 0; i < 4; ++i) {
         b.ThrowIn(5, yellow);
+    }
+    CHECK(b.Test() == VictoryStatus::VictoryYellow);
+}
+
+TEST_CASE("4 in a upwards diagonal win") {
+    Board b;
+    for (int i = 0; i < 4; ++i) {
+        for (int k = 0; k < i; ++k) {
+            b.ThrowIn(i + 1, yellow);
+        }
+        b.ThrowIn(i + 1, red);
+    }
+    CHECK(b.Test() == VictoryStatus::VictoryRed);
+}
+
+TEST_CASE("4 in a downwards diagonal win") {
+    Board b;
+    for (int i = 0; i < 4; ++i) {
+        for (int k = 0; k < 3-i; ++k) {
+            b.ThrowIn(i + 1, red);
+        }
+        b.ThrowIn(i + 1, yellow);
     }
     CHECK(b.Test() == VictoryStatus::VictoryYellow);
 }
