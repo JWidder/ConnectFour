@@ -5,7 +5,7 @@
 namespace tlCF {
 
     enum BoardFieldStatus : uint8_t { empty = 0, yellow = 1, red = 2};
-    enum class VictoryStatus { Continue, VictoryRed, VictoryYellow, Draw};
+    enum class VictoryStatus { Continue, VictoryYellow = yellow, VictoryRed = red, Draw};
 
     uint32_t GetMask(uint32_t bitPosition);
 
@@ -14,8 +14,8 @@ namespace tlCF {
     //organized row - collumn
     class Board {
       public:
-        const static uint32_t row_size = 6;
-        const static uint32_t collumn_size = 7;
+        const static uint32_t row_count = 6;
+        const static uint32_t collumn_count = 7;
 
         Board();
 
@@ -35,8 +35,10 @@ namespace tlCF {
         BoardFieldStatus GetStatus(FieldPosition position) const;
         void WritePosition(FieldPosition pos, BoardFieldStatus color);
 
+        VictoryStatus TestRows() const;
+        VictoryStatus TestCollumns() const;
+
         uint32_t data_[3];
-        BoardFieldStatus lastColor_;
     };
 
 }

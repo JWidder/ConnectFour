@@ -8,8 +8,8 @@ using namespace tlCF;
 
 TEST_CASE("default board is empty", "[board]") {
     Board b;
-    for (uint32_t i = 0; i < Board::collumn_size; ++i) {
-        for (uint32_t k = 0; k < Board::row_size; ++k) {
+    for (uint32_t i = 0; i < Board::collumn_count; ++i) {
+        for (uint32_t k = 0; k < Board::row_count; ++k) {
             CHECK(b.GetStatus(k, i) == empty);
         }
     }
@@ -28,8 +28,8 @@ BoardFieldStatus Flip(BoardFieldStatus f) {
 TEST_CASE("throwing in a color works", "[board]") {
     Board b;
     BoardFieldStatus color = red;
-    for (uint32_t i = 0; i < Board::collumn_size; ++i) {
-        for (uint32_t k = 0; k < Board::row_size; ++k) {
+    for (uint32_t i = 0; i < Board::collumn_count; ++i) {
+        for (uint32_t k = 0; k < Board::row_count; ++k) {
             CHECK(b.GetStatus(k, i) == empty);
             CHECK(b.ThrowIn(i, color) == true);
             CHECK(b.GetStatus(k, i) == color);
@@ -71,4 +71,21 @@ TEST_CASE("Full Board means draw", "[board]") {
         collumn += 1;
     }
     CHECK(b.Test() == VictoryStatus::Draw);
+}
+
+TEST_CASE("4 in a row are win") {
+    Board b;
+    for (unsigned int i = 0; i < 4; ++i) {
+        b.ThrowIn(i, red);
+    }
+    CHECK(b.Test() == VictoryStatus::VictoryRed);
+}
+
+TEST_CASE("4 in a collumn are win") {
+    Board b;
+    b.ThrowIn(5, red);
+    for (unsigned int i = 0; i < 4; ++i) {
+        b.ThrowIn(5, yellow);
+    }
+    CHECK(b.Test() == VictoryStatus::VictoryYellow);
 }
