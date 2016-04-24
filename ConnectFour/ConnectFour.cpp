@@ -181,3 +181,44 @@ bool tlCF::BitBoard::CanThrowIn(const uint32_t collumn) const {
 void tlCF::BitBoard::Clear() {
     std::fill(std::begin(data_), std::end(data_), 0);
 }
+
+VictoryStatus tlCF::BitBoard::Test() const {
+    //test is done via clever shifting.
+    //first a shift by 1 clears out the first element
+    //and clears out something in between if there's
+    //a hole
+    //then a shift by 2 checks if there are still items
+    //when the result is not 0, there was a match
+    //this can be done in parallel for all possible
+    //solutions in one of the direction
+    //(horizontal, vertical, diag1, diag2)
+    auto fillStatus = data_[IndexYellow] | data_[IndexRed];
+    auto mask = 0b100000ull << 0 * (row_count + 1) |
+                0b100000ull << 1 * (row_count + 1) |
+                0b100000ull << 2 * (row_count + 1) |
+                0b100000ull << 3 * (row_count + 1) |
+                0b100000ull << 4 * (row_count + 1) |
+                0b100000ull << 5 * (row_count + 1) |
+                0b100000ull << 6 * (row_count + 1);
+    auto bits = fillStatus & mask;
+    if (__popcnt64(bits) == 7) return VictoryStatus::Draw;
+    else if (hasWon(yellow)) return VictoryStatus::VictoryYellow;
+    else if (hasWon(red)) return VictoryStatus::VictoryRed;
+    else return VictoryStatus::Continue;
+}
+
+bool tlCF::BitBoard::hasWon(BoardFieldStatus color) const {
+    Expects(color == red || color == yellow);
+    auto data = data_[color - 1];
+    auto vert = data & (data >> 1);
+    auto v_result = vert & (vert >> 2);
+    auto hori = data & (data >> (row_count + 1));
+    auto h_result = hori & (hori >> (2 * (row_count + 1)));
+    //shift one less than the actual height
+    auto diag1 = data & (data >> row_count);
+    auto d1_result = diag1 & (diag1 >> (2 * row_count));
+    //shift one more than the actual height
+    auto diag2 = data & (data >> (row_count + 2));
+    auto d2_result = diag2 & (diag2 >> (2 * (row_count + 2)));
+    return v_result | h_result | d1_result | d2_result;
+}

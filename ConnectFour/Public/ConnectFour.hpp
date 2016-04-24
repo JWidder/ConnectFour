@@ -53,7 +53,12 @@ namespace tlCF {
         bool ThrowIn(const uint32_t collumn, const BoardFieldStatus color);
         bool CanThrowIn(const uint32_t collumn) const;
         void Clear();
+
+        VictoryStatus Test() const;
       private:
+
+        bool hasWon(BoardFieldStatus color) const;
+
         const unsigned int IndexYellow = 0;
         const unsigned int IndexRed = 1;
         //each element of data_ contains bit-coded whether a certain color is set or not

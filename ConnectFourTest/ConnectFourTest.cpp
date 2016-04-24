@@ -6,6 +6,8 @@
 
 using namespace tlCF;
 
+
+
 TEST_CASE("default board is empty", "[board]") {
     Board b;
     for (uint32_t i = 0; i < Board::collumn_count; ++i) {
@@ -26,7 +28,7 @@ BoardFieldStatus Flip(BoardFieldStatus f) {
 }
 
 template <typename Board_t>
-void throwin1() {
+void throwinTest() {
     Board_t b;
     BoardFieldStatus color = red;
     for (uint32_t i = 0; i < Board_t::collumn_count; ++i) {
@@ -41,12 +43,13 @@ void throwin1() {
 }
 
 TEST_CASE("throwing in a color works", "[board]") {
-    throwin1<Board>();
-    throwin1<BitBoard>();
+    throwinTest<Board>();
+    throwinTest<BitBoard>();
 }
 
-TEST_CASE("clearing the board works", "[board]") {
-    Board b;
+template <typename Board_t>
+void clearBoardTest() {
+    Board_t b;
     BoardFieldStatus color = red;
     b.ThrowIn(4, color);
     CHECK(b.GetStatus(0, 4) == color);
@@ -54,21 +57,33 @@ TEST_CASE("clearing the board works", "[board]") {
     CHECK(b.GetStatus(0, 4) == empty);
 }
 
-TEST_CASE("Testing the empty board means continue", "[board]") {
-    Board b;
+TEST_CASE("clearing the board works", "[board]") {
+    clearBoardTest<Board>();
+    clearBoardTest<BitBoard>();
+}
+
+template <typename Board_t>
+void testContinue() {
+    Board_t b;
     CHECK(b.Test() == VictoryStatus::Continue);
 }
 
-TEST_CASE("Full Board means draw", "[board]") {
-    Board b;
+TEST_CASE("Testing the empty board means continue", "[board]") {
+    testContinue<Board>();
+    testContinue<BitBoard>();
+}
+
+template <typename Board_t>
+void testDraw() {
+    Board_t b;
     //fill board
-    std::vector<std::vector<int>> data = { {1,1,1,2,1,1},
-        {1,1,1,2,1,1},
-        {1,1,2,2,2,1},
-        {2,2,2,1,2,2},
-        {1,1,2,2,2,1},
-        {1,1,1,2,1,1},
-        {1,1,1,2,1,1}
+    std::vector<std::vector<int>> data = { { 1,1,1,2,1,1 },
+        { 1,1,1,2,1,1 },
+        { 1,1,2,2,2,1 },
+        { 2,2,2,1,2,2 },
+        { 1,1,2,2,2,1 },
+        { 1,1,1,2,1,1 },
+        { 1,1,1,2,1,1 }
     };
     uint32_t collumn = 0;
     for (const auto& i : data) {
@@ -80,16 +95,28 @@ TEST_CASE("Full Board means draw", "[board]") {
     CHECK(b.Test() == VictoryStatus::Draw);
 }
 
-TEST_CASE("4 in a row win") {
-    Board b;
+TEST_CASE("Full Board means draw", "[board]") {
+    testDraw<Board>();
+    testDraw<BitBoard>();
+}
+
+template <typename Board_t>
+void testRow() {
+    Board_t b;
     for (unsigned int i = 0; i < 4; ++i) {
         b.ThrowIn(i, red);
     }
     CHECK(b.Test() == VictoryStatus::VictoryRed);
 }
 
-TEST_CASE("4 in a collumn win") {
-    Board b;
+TEST_CASE("4 in a row win") {
+    testRow<Board>();
+    testRow<BitBoard>();
+}
+
+template <typename Board_t>
+void testCollumn() {
+    Board_t b;
     b.ThrowIn(5, red);
     for (unsigned int i = 0; i < 4; ++i) {
         b.ThrowIn(5, yellow);
@@ -97,8 +124,14 @@ TEST_CASE("4 in a collumn win") {
     CHECK(b.Test() == VictoryStatus::VictoryYellow);
 }
 
-TEST_CASE("4 in a upwards diagonal win") {
-    Board b;
+TEST_CASE("4 in a collumn win") {
+    testCollumn<Board>();
+    testCollumn<BitBoard>();
+}
+
+template <typename Board_t>
+void testDiagUp() {
+    Board_t b;
     for (int i = 0; i < 4; ++i) {
         for (int k = 0; k < i; ++k) {
             b.ThrowIn(i + 1, yellow);
@@ -108,13 +141,24 @@ TEST_CASE("4 in a upwards diagonal win") {
     CHECK(b.Test() == VictoryStatus::VictoryRed);
 }
 
-TEST_CASE("4 in a downwards diagonal win") {
-    Board b;
+TEST_CASE("4 in a upwards diagonal win") {
+    testDiagUp<Board>();
+    testDiagUp<BitBoard>();
+}
+
+template <typename Board_t>
+void testDiagDown() {
+    Board_t b;
     for (int i = 0; i < 4; ++i) {
-        for (int k = 0; k < 3-i; ++k) {
+        for (int k = 0; k < 3 - i; ++k) {
             b.ThrowIn(i + 1, red);
         }
         b.ThrowIn(i + 1, yellow);
     }
     CHECK(b.Test() == VictoryStatus::VictoryYellow);
+}
+
+TEST_CASE("4 in a downwards diagonal win") {
+    testDiagDown<Board>();
+    testDiagDown<BitBoard>();
 }
