@@ -220,5 +220,5 @@ bool tlCF::BitBoard::hasWon(BoardFieldStatus color) const {
     //shift one more than the actual height
     auto diag2 = data & (data >> (row_count + 2));
     auto d2_result = diag2 & (diag2 >> (2 * (row_count + 2)));
-    return v_result | h_result | d1_result | d2_result;
+    return (v_result | h_result | d1_result | d2_result)!=0;
 }
