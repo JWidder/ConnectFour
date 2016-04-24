@@ -25,17 +25,24 @@ BoardFieldStatus Flip(BoardFieldStatus f) {
     return result;
 }
 
-TEST_CASE("throwing in a color works", "[board]") {
-    Board b;
+template <typename Board_t>
+void throwin1() {
+    Board_t b;
     BoardFieldStatus color = red;
-    for (uint32_t i = 0; i < Board::collumn_count; ++i) {
-        for (uint32_t k = 0; k < Board::row_count; ++k) {
+    for (uint32_t i = 0; i < Board_t::collumn_count; ++i) {
+        for (uint32_t k = 0; k < Board_t::row_count; ++k) {
+            INFO("k: " << k << " i:" << i);
             CHECK(b.GetStatus(k, i) == empty);
             CHECK(b.ThrowIn(i, color) == true);
             CHECK(b.GetStatus(k, i) == color);
             color = Flip(color);
         }
     }
+}
+
+TEST_CASE("throwing in a color works", "[board]") {
+    throwin1<Board>();
+    throwin1<BitBoard>();
 }
 
 TEST_CASE("clearing the board works", "[board]") {

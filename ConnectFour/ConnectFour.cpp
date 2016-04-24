@@ -1,6 +1,7 @@
 #include "ConnectFour.hpp"
 #include "gsl_assert.h"
 #include <algorithm>
+#include <intrin.h>
 
 using namespace tlCF;
 
@@ -147,4 +148,36 @@ VictoryStatus tlCF::Board::Test() const {
         return VictoryStatus::Draw;
     }
     return VictoryStatus::Continue;
+}
+
+tlCF::BitBoard::BitBoard() {
+    Clear();
+}
+
+BoardFieldStatus tlCF::BitBoard::GetStatus(const uint32_t row, const uint32_t collumn) const {
+    auto shiftValue = (row + collumn*(row_count + 1));
+    auto bitMask = 1ull << shiftValue;
+    auto result = ((data_[IndexYellow] & bitMask) >> shiftValue) + 2 * ((data_[IndexRed] & bitMask) >> shiftValue);
+    return static_cast<BoardFieldStatus>(result);
+}
+
+bool tlCF::BitBoard::ThrowIn(const uint32_t collumn, const BoardFieldStatus color) {
+    Expects(color == yellow || color == red);
+    if (!CanThrowIn(collumn)) return false;
+    auto bitMask = 0b111111ull << (collumn*(row_count + 1)); //mask out a collumn
+    auto field = (data_[0] | data_[1])& bitMask;
+    //since we masked out all other parts of the field, only the used slots in our collumn remain and we can count them
+    auto usedFields = __popcnt64(field);
+    data_[color-1] |= 1ull << (usedFields + collumn*(row_count + 1));
+    return true;
+}
+
+bool tlCF::BitBoard::CanThrowIn(const uint32_t collumn) const {
+    auto fillStatus = data_[IndexYellow] | data_[IndexRed];
+    auto mask = 0b100000ull << collumn*(row_count + 1); //check top-most field
+    return (fillStatus & mask) == 0;
+}
+
+void tlCF::BitBoard::Clear() {
+    std::fill(std::begin(data_), std::end(data_), 0);
 }
