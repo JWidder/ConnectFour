@@ -222,3 +222,61 @@ bool tlCF::BitBoard::hasWon(BoardFieldStatus color) const {
     auto d2_result = diag2 & (diag2 >> (2 * (row_count + 2)));
     return (v_result | h_result | d1_result | d2_result)!=0;
 }
+
+void tlCF::Player::SetCallback(std::function<void(int)> callback) {
+    Expects(callback);
+    SetCallback_Impl(callback);
+}
+
+unsigned char tlCF::Player::Play(BoardFieldStatus color, const BitBoard& board, unsigned int timelimit) {
+    Expects(color == yellow || color == red);
+    auto result = Play_Impl(color, board, timelimit);
+    Ensures(result < 7);
+    return result;
+}
+
+std::string tlCF::Player::GetName() const {
+    return GetName_Impl();
+}
+
+tlCF::Game::Game(std::function<Player*()> yellow, std::function<Player*()> red)
+    : yellow_(yellow),
+      red_(red) {
+    Expects(yellow);
+    Expects(red);
+    init();
+}
+
+void tlCF::Game::init() {
+    players_[0].reset(yellow_());
+    players_[1].reset(red_());
+    std::fill(std::begin(moves_), std::end(moves_), empty);
+    board_.Clear();
+}
+
+void tlCF::Game::Reset(bool swapPlayer) {
+    if (swapPlayer) {
+        std::swap(yellow_, red_);
+    }
+    init();
+}
+
+GameResult tlCF::Game::PlayGame() {
+    unsigned int playerIndex = 0;
+    unsigned int moveIndex = 0;
+    while (board_.Test() == VictoryStatus::Continue) {
+        auto move = players_[playerIndex]->Play(static_cast<BoardFieldStatus>(playerIndex+1),board_,0);
+        moves_[moveIndex] = move;
+        playerIndex = (playerIndex + 1) % 2;
+        if (!board_.CanThrowIn(move)) break; //break off due to illegal move
+        else (board_.ThrowIn(move, static_cast<BoardFieldStatus>(playerIndex + 1)));
+    }
+    playerIndex = (playerIndex + 1) % 2; //adjust index back to the one that moved last
+    GameResult result;
+    result.yellow = players_[0]->GetName();
+    result.red = players_[1]->GetName();
+    result.result = (board_.Test() == VictoryStatus::Continue) ? static_cast<VictoryStatus>(playerIndex + 1) : board_.Test();
+    std::copy(std::begin(moves_), std::end(moves_),std::begin(result.moves));
+    Ensures(result.result != VictoryStatus::Continue);
+    return result;
+}

@@ -1,6 +1,8 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
+#include <functional>
 
 namespace tlCF {
 
@@ -74,6 +76,45 @@ namespace tlCF {
         //they are required for the test-algorithms based on shifts
         //to avoid matches due to overflow
         uint64_t data_[2];
+    };
+
+    class Player {
+      public:
+        void SetCallback(std::function<void(int)> callback);
+        unsigned char Play(BoardFieldStatus color, const BitBoard& board, unsigned int timelimit);
+
+        std::string GetName() const;
+
+      protected:
+        virtual void SetCallback_Impl(std::function<void(int)> callback) = 0;
+        virtual unsigned char Play_Impl(BoardFieldStatus color, const BitBoard& board, unsigned int timelimit) = 0;
+        virtual std::string GetName_Impl() const = 0;
+    };
+
+    struct GameResult {
+        std::string red;
+        std::string yellow;
+        VictoryStatus result;
+        unsigned char moves[42];
+    };
+
+    class Game {
+      public:
+        Game(std::function<Player*()> yellow, std::function<Player*()> red);
+
+        void Reset(bool swapPlayer);
+
+        GameResult PlayGame();
+
+      private:
+        void init();
+
+        std::function<Player*()> yellow_;
+        std::function<Player*()> red_;
+
+        std::unique_ptr<Player> players_[2];
+        BitBoard board_;
+        unsigned char moves_[42]; //maximum 42 moves
     };
 
 }
