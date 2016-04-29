@@ -109,7 +109,7 @@ void testRow() {
     CHECK(b.Test() == VictoryStatus::VictoryRed);
 }
 
-TEST_CASE("4 in a row win") {
+TEST_CASE("4 in a row win", "[board]") {
     testRow<Board>();
     testRow<BitBoard>();
 }
@@ -124,7 +124,7 @@ void testCollumn() {
     CHECK(b.Test() == VictoryStatus::VictoryYellow);
 }
 
-TEST_CASE("4 in a collumn win") {
+TEST_CASE("4 in a collumn win", "[board]") {
     testCollumn<Board>();
     testCollumn<BitBoard>();
 }
@@ -141,7 +141,7 @@ void testDiagUp() {
     CHECK(b.Test() == VictoryStatus::VictoryRed);
 }
 
-TEST_CASE("4 in a upwards diagonal win") {
+TEST_CASE("4 in a upwards diagonal win", "[board]") {
     testDiagUp<Board>();
     testDiagUp<BitBoard>();
 }
@@ -158,7 +158,7 @@ void testDiagDown() {
     CHECK(b.Test() == VictoryStatus::VictoryYellow);
 }
 
-TEST_CASE("4 in a downwards diagonal win") {
+TEST_CASE("4 in a downwards diagonal win", "[board]") {
     testDiagDown<Board>();
     testDiagDown<BitBoard>();
 }

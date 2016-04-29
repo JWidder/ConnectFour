@@ -223,16 +223,9 @@ bool tlCF::BitBoard::hasWon(BoardFieldStatus color) const {
     return (v_result | h_result | d1_result | d2_result)!=0;
 }
 
-void tlCF::Player::SetCallback(std::function<void(int)> callback) {
-    Expects(callback);
-    SetCallback_Impl(callback);
-}
-
-unsigned char tlCF::Player::Play(BoardFieldStatus color, const BitBoard& board, unsigned int timelimit) {
+std::future<unsigned char> tlCF::Player::Play(BoardFieldStatus color, const BitBoard& board, unsigned int timelimit) {
     Expects(color == yellow || color == red);
-    auto result = Play_Impl(color, board, timelimit);
-    Ensures(result < 7);
-    return result;
+    return Play_Impl(color, board, timelimit);
 }
 
 std::string tlCF::Player::GetName() const {
@@ -265,7 +258,8 @@ GameResult tlCF::Game::PlayGame() {
     unsigned int playerIndex = 0;
     unsigned int moveIndex = 0;
     while (board_.Test() == VictoryStatus::Continue) {
-        auto move = players_[playerIndex]->Play(static_cast<BoardFieldStatus>(playerIndex+1),board_,0);
+        auto future_move = players_[playerIndex]->Play(static_cast<BoardFieldStatus>(playerIndex+1),board_,0);
+        auto move = future_move.get();
         moves_[moveIndex] = move;
         playerIndex = (playerIndex + 1) % 2;
         if (!board_.CanThrowIn(move)) break; //break off due to illegal move

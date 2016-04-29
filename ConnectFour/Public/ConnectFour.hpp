@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <memory>
 #include <functional>
+#include <future>
 
 namespace tlCF {
 
@@ -80,14 +81,13 @@ namespace tlCF {
 
     class Player {
       public:
-        void SetCallback(std::function<void(int)> callback);
-        unsigned char Play(BoardFieldStatus color, const BitBoard& board, unsigned int timelimit);
+        std::future<unsigned char> Play(BoardFieldStatus color, const BitBoard& board, unsigned int timelimit);
 
         std::string GetName() const;
 
       protected:
         virtual void SetCallback_Impl(std::function<void(int)> callback) = 0;
-        virtual unsigned char Play_Impl(BoardFieldStatus color, const BitBoard& board, unsigned int timelimit) = 0;
+        virtual std::future<unsigned char> Play_Impl(BoardFieldStatus color, const BitBoard& board, unsigned int timelimit) = 0;
         virtual std::string GetName_Impl() const = 0;
     };
 
