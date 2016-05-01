@@ -4,7 +4,7 @@
 
 #include "gsl_assert.h"
 
-class CollumnPlayer : tlCF::Player {
+class CollumnPlayer : public tlCF::Player {
   public:
     CollumnPlayer(unsigned char startCollumn) : collumn_(startCollumn) {
         Expects(startCollumn < 7);
@@ -26,5 +26,28 @@ class CollumnPlayer : tlCF::Player {
     }
 
     unsigned char collumn_;
-    std::function<void(int)> callback_;
 };
+
+TEST_CASE("Result is not 'continue'", "[game]") {
+    std::function<tlCF::Player*()> red = []() {
+        return new CollumnPlayer(0);
+    };
+    std::function<tlCF::Player*()> yellow = []() {
+        return new CollumnPlayer(4);
+    };
+    tlCF::Game game(red, yellow);
+    auto result = game.PlayGame();
+    CHECK(result.result == tlCF::VictoryStatus::VictoryRed);
+}
+
+TEST_CASE("Performance Test - Random Player", "[.][performance][game]") {
+    std::function<tlCF::Player*()> player = []() {
+        return new tlCF::RandomPlayer();
+    };
+    tlCF::Game game(player, player);
+    for (int i = 0; i < 10000; ++i) {
+        game.Reset(false);
+        auto result = game.PlayGame();
+        CHECK(result.result != tlCF::VictoryStatus::Continue);
+    }
+}

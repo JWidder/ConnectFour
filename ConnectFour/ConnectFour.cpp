@@ -274,3 +274,19 @@ GameResult tlCF::Game::PlayGame() {
     Ensures(result.result != VictoryStatus::Continue);
     return result;
 }
+
+tlCF::RandomPlayer::RandomPlayer()
+    : engine_(dev_()) {
+
+}
+
+std::future<unsigned char> tlCF::RandomPlayer::Play_Impl(BoardFieldStatus color, const BitBoard & board, unsigned int timelimit) {
+    std::uniform_int_distribution<> dist(0, 6);
+    std::promise<unsigned char> promise;
+    promise.set_value(dist(engine_));
+    return promise.get_future();
+}
+
+std::string tlCF::RandomPlayer::GetName_Impl() const {
+    return "RandomPlayer";
+}
