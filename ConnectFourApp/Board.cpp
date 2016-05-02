@@ -3,22 +3,25 @@
 #include <QMouseEvent>
 
 Board::Board(QWidget* parent)
-    : nextColor_(tlCF::BoardFieldStatus::yellow) {
+    : promise_already_set_(false) {
     this->setMinimumSize(700, 600);
     this->setMaximumSize(700, 600);
 }
 
 void Board::Reset() {
     board_.Clear();
-    game_.Reset(false);
-    repaint();
+    promise_already_set_ = false;
+    update();
 }
 
 void Board::mousePressEvent(QMouseEvent* event) {
     if (event->button() == 1) { //left mouse button
         auto x = event->x();
         auto collumn = x / 100;
-        move_.set_value(collumn);
+        if (!promise_already_set_) {
+            move_.set_value(collumn);
+            promise_already_set_ = true;
+        }
     }
 }
 
@@ -39,13 +42,14 @@ void Board::paintEvent(QPaintEvent* event) {
     }
 }
 
-void Board::Update(tlCF::BitBoard board) {
+void Board::UpdateBoard(tlCF::BitBoard board) {
     board_ = board;
-    repaint();
+    update();
 }
 
 std::future<unsigned char> Board::Play_Impl(tlCF::BoardFieldStatus color, const tlCF::BitBoard & board, unsigned int timelimit) {
     move_ = std::promise<unsigned char>();
+    promise_already_set_ = false;
     return move_.get_future();
 }
 

@@ -2,12 +2,15 @@
 #include <QWidget>
 
 #include "ConnectFour.hpp"
+#include <atomic>
 
 class Board : public QWidget, public tlCF::Player {
     Q_OBJECT
 
   public:
     Board(QWidget* parent = nullptr);
+
+    void UpdateBoard(tlCF::BitBoard board);
 
   public slots:
     void Reset();
@@ -16,10 +19,11 @@ class Board : public QWidget, public tlCF::Player {
     void paintEvent(QPaintEvent* event) Q_DECL_OVERRIDE;
     void mousePressEvent(QMouseEvent* event) Q_DECL_OVERRIDE;
 
-    void Update(tlCF::BitBoard board);
+
 
   private:
     tlCF::BitBoard board_;
+    std::atomic<bool> promise_already_set_;
 
     //threading
     std::promise<unsigned char> move_;

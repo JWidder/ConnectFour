@@ -2,6 +2,8 @@
 #include <QMainWindow>
 #include <Board.h>
 
+#include "ConnectFour.hpp"
+
 class MainWindow : public QMainWindow {
     Q_OBJECT
 
@@ -13,4 +15,6 @@ class MainWindow : public QMainWindow {
 
   private:
     Board* board_;
+    std::unique_ptr<tlCF::Game> game_;
+    std::unique_ptr<tlCF::Player> random_;
 };
