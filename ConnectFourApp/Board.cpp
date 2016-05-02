@@ -10,6 +10,7 @@ Board::Board(QWidget* parent)
 
 void Board::Reset() {
     board_.Clear();
+    game_.Reset(false);
     repaint();
 }
 
@@ -17,12 +18,7 @@ void Board::mousePressEvent(QMouseEvent* event) {
     if (event->button() == 1) { //left mouse button
         auto x = event->x();
         auto collumn = x / 100;
-        if (board_.CanThrowIn(collumn)) {
-            board_.ThrowIn(collumn, nextColor_);
-            nextColor_ = static_cast<tlCF::BoardFieldStatus>(static_cast<int>(nextColor_) ^ 3);
-            if (board_.Test() != tlCF::VictoryStatus::Continue) board_.Clear();
-            repaint();
-        }
+        move_.set_value(collumn);
     }
 }
 
@@ -41,4 +37,18 @@ void Board::paintEvent(QPaintEvent* event) {
             painter.drawEllipse(10 + i * 100, 10 + k * 100, 80, 80);
         }
     }
+}
+
+void Board::Update(tlCF::BitBoard board) {
+    board_ = board;
+    repaint();
+}
+
+std::future<unsigned char> Board::Play_Impl(tlCF::BoardFieldStatus color, const tlCF::BitBoard & board, unsigned int timelimit) {
+    move_ = std::promise<unsigned char>();
+    return move_.get_future();
+}
+
+std::string Board::GetName_Impl() const {
+    return "Human";
 }

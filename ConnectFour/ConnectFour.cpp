@@ -154,6 +154,17 @@ tlCF::BitBoard::BitBoard() {
     Clear();
 }
 
+tlCF::BitBoard::BitBoard(const BitBoard & b) {
+    data_[0] = b.data_[0];
+    data_[1] = b.data_[1];
+}
+
+BitBoard & tlCF::BitBoard::operator=(const BitBoard & b) {
+    data_[0] = b.data_[0];
+    data_[1] = b.data_[1];
+    return *this;
+}
+
 BoardFieldStatus tlCF::BitBoard::GetStatus(const uint32_t row, const uint32_t collumn) const {
     auto shiftValue = (row + collumn*(row_count + 1));
     auto bitMask = 1ull << shiftValue;
@@ -228,28 +239,32 @@ std::future<unsigned char> tlCF::Player::Play(BoardFieldStatus color, const BitB
     return Play_Impl(color, board, timelimit);
 }
 
+void tlCF::Player::Reset() {
+    Reset_Impl();
+}
+
 std::string tlCF::Player::GetName() const {
     return GetName_Impl();
 }
 
-tlCF::Game::Game(std::function<Player*()> yellow, std::function<Player*()> red)
-    : yellow_(yellow),
-      red_(red) {
-    Expects(yellow);
-    Expects(red);
+tlCF::Game::Game(Player* yellow, Player* red) {
+    Expects(yellow != nullptr);
+    Expects(red != nullptr);
+    players_[0] = yellow;
+    players_[1] = red;
     init();
 }
 
 void tlCF::Game::init() {
-    players_[0].reset(yellow_());
-    players_[1].reset(red_());
     std::fill(std::begin(moves_), std::end(moves_), empty);
     board_.Clear();
+    players_[0]->Reset();
+    players_[1]->Reset();
 }
 
 void tlCF::Game::Reset(bool swapPlayer) {
     if (swapPlayer) {
-        std::swap(yellow_, red_);
+        std::swap(players_[0], players_[1]);
     }
     init();
 }
@@ -264,6 +279,7 @@ GameResult tlCF::Game::PlayGame() {
         playerIndex = (playerIndex + 1) % 2;
         if (!board_.CanThrowIn(move)) break; //break off due to illegal move
         else (board_.ThrowIn(move, static_cast<BoardFieldStatus>(playerIndex + 1)));
+        if (observer_) observer_(board_);
     }
     playerIndex = (playerIndex + 1) % 2; //adjust index back to the one that moved last
     GameResult result;
@@ -273,6 +289,10 @@ GameResult tlCF::Game::PlayGame() {
     std::copy(std::begin(moves_), std::end(moves_),std::begin(result.moves));
     Ensures(result.result != VictoryStatus::Continue);
     return result;
+}
+
+void tlCF::Game::RegisterObserver(std::function<void(tlCF::BitBoard)> observer) {
+    observer_ = observer;
 }
 
 tlCF::RandomPlayer::RandomPlayer()

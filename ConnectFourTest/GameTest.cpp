@@ -29,22 +29,18 @@ class CollumnPlayer : public tlCF::Player {
 };
 
 TEST_CASE("Result is not 'continue'", "[game]") {
-    std::function<tlCF::Player*()> red = []() {
-        return new CollumnPlayer(0);
-    };
-    std::function<tlCF::Player*()> yellow = []() {
-        return new CollumnPlayer(4);
-    };
-    tlCF::Game game(red, yellow);
+    auto yellow = std::make_unique<CollumnPlayer>(0);
+    auto red = std::make_unique<CollumnPlayer>(4);
+    tlCF::Game game(yellow.get(), red.get());
     auto result = game.PlayGame();
     CHECK(result.result == tlCF::VictoryStatus::VictoryRed);
 }
 
 TEST_CASE("Performance Test - Random Player", "[.][performance][game]") {
-    std::function<tlCF::Player*()> player = []() {
-        return new tlCF::RandomPlayer();
-    };
-    tlCF::Game game(player, player);
+    auto random = std::make_unique<tlCF::RandomPlayer>();
+    auto random2 = std::make_unique<tlCF::RandomPlayer>();
+
+    tlCF::Game game(random.get(), random2.get());
     for (int i = 0; i < 10000; ++i) {
         game.Reset(false);
         auto result = game.PlayGame();

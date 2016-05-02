@@ -52,6 +52,8 @@ namespace tlCF {
         const static uint32_t collumn_count = 7;
 
         BitBoard();
+        BitBoard(const BitBoard& b);
+        BitBoard& operator=(const BitBoard& b);
 
         BoardFieldStatus GetStatus(const uint32_t row, const uint32_t collumn) const;
         bool ThrowIn(const uint32_t collumn, const BoardFieldStatus color);
@@ -83,12 +85,13 @@ namespace tlCF {
     class Player {
       public:
         std::future<unsigned char> Play(BoardFieldStatus color, const BitBoard& board, unsigned int timelimit);
-
+        void Reset();
         std::string GetName() const;
 
       protected:
         virtual std::future<unsigned char> Play_Impl(BoardFieldStatus color, const BitBoard& board, unsigned int timelimit) = 0;
         virtual std::string GetName_Impl() const = 0;
+        virtual void Reset_Impl() {};
     };
 
     struct GameResult {
@@ -100,19 +103,20 @@ namespace tlCF {
 
     class Game {
       public:
-        Game(std::function<Player*()> yellow, std::function<Player*()> red);
+        Game(Player* yellow, Player* red);
 
         void Reset(bool swapPlayer);
 
         GameResult PlayGame();
+        void RegisterObserver(std::function<void(tlCF::BitBoard)> observer);
 
       private:
         void init();
 
-        std::function<Player*()> yellow_;
-        std::function<Player*()> red_;
 
-        std::unique_ptr<Player> players_[2];
+        std::function<void(tlCF::BitBoard)> observer_;
+
+        Player* players_[2];
         BitBoard board_;
         unsigned char moves_[42]; //maximum 42 moves
     };
