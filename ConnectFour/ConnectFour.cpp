@@ -234,9 +234,9 @@ bool tlCF::BitBoard::hasWon(BoardFieldStatus color) const {
     return (v_result | h_result | d1_result | d2_result)!=0;
 }
 
-std::future<unsigned char> tlCF::Player::Play(BoardFieldStatus color, const BitBoard& board, unsigned int timelimit) {
+std::future<unsigned char> tlCF::Player::Play(BoardFieldStatus color, const BitBoard& board) {
     Expects(color == yellow || color == red);
-    return Play_Impl(color, board, timelimit);
+    return Play_Impl(color, board);
 }
 
 void tlCF::Player::Reset() {
@@ -273,7 +273,7 @@ GameResult tlCF::Game::PlayGame() {
     unsigned int playerIndex = 0;
     unsigned int moveIndex = 0;
     while (board_.Test() == VictoryStatus::Continue) {
-        auto future_move = players_[playerIndex]->Play(static_cast<BoardFieldStatus>(playerIndex+1),board_,0);
+        auto future_move = players_[playerIndex]->Play(static_cast<BoardFieldStatus>(playerIndex+1),board_);
         auto move = future_move.get();
         moves_[moveIndex] = move;
         playerIndex = (playerIndex + 1) % 2;
@@ -293,20 +293,4 @@ GameResult tlCF::Game::PlayGame() {
 
 void tlCF::Game::RegisterObserver(std::function<void(tlCF::BitBoard)> observer) {
     observer_ = observer;
-}
-
-tlCF::RandomPlayer::RandomPlayer()
-    : engine_(dev_()) {
-
-}
-
-std::future<unsigned char> tlCF::RandomPlayer::Play_Impl(BoardFieldStatus color, const BitBoard & board, unsigned int timelimit) {
-    std::uniform_int_distribution<> dist(0, 6);
-    std::promise<unsigned char> promise;
-    promise.set_value(dist(engine_));
-    return promise.get_future();
-}
-
-std::string tlCF::RandomPlayer::GetName_Impl() const {
-    return "RandomPlayer";
 }

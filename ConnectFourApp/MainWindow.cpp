@@ -5,6 +5,7 @@
 
 #include <thread>
 #include "ConnectFour.hpp"
+#include "Players.hpp"
 
 
 MainWindow::MainWindow() {
@@ -21,7 +22,7 @@ MainWindow::MainWindow() {
     setWindowTitle("Connect 4");
 
     //initialize game objects
-    random_ = std::make_unique<tlCF::RandomPlayer>();
+    random_ = std::make_unique<tlCF::MonteCarlo_ST>();
     game_ = std::make_unique<tlCF::Game>(board_, random_.get());
     game_->RegisterObserver([&](tlCF::BitBoard b) {
         board_->UpdateBoard(b);

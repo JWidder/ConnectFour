@@ -1,5 +1,6 @@
 #include "catch.hpp"
 #include "ConnectFour.hpp"
+#include "Players.hpp"
 #include <future>
 
 #include "gsl_assert.h"
@@ -12,7 +13,7 @@ class CollumnPlayer : public tlCF::Player {
     // Inherited via Player
   private:
 
-    virtual std::future<unsigned char> Play_Impl(tlCF::BoardFieldStatus color, const tlCF::BitBoard & board, unsigned int timelimit) override {
+    virtual std::future<unsigned char> Play_Impl(tlCF::BoardFieldStatus color, const tlCF::BitBoard & board) override {
         auto result = collumn_;
         collumn_ = (collumn_ + 1) % 7;
         Ensures(result < 7);

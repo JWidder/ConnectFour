@@ -29,6 +29,6 @@ class Board : public QWidget, public tlCF::Player {
     std::promise<unsigned char> move_;
 
     // Inherited via Player
-    virtual std::future<unsigned char> Play_Impl(tlCF::BoardFieldStatus color, const tlCF::BitBoard & board, unsigned int timelimit) override;
-    virtual std::string GetName_Impl() const override;
+    virtual std::future<unsigned char> Play_Impl(tlCF::BoardFieldStatus color, const tlCF::BitBoard & board) override final;
+    virtual std::string GetName_Impl() const override final;
 };

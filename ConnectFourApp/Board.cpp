@@ -47,7 +47,7 @@ void Board::UpdateBoard(tlCF::BitBoard board) {
     update();
 }
 
-std::future<unsigned char> Board::Play_Impl(tlCF::BoardFieldStatus color, const tlCF::BitBoard & board, unsigned int timelimit) {
+std::future<unsigned char> Board::Play_Impl(tlCF::BoardFieldStatus color, const tlCF::BitBoard & board) {
     move_ = std::promise<unsigned char>();
     promise_already_set_ = false;
     return move_.get_future();

@@ -4,7 +4,6 @@
 #include <memory>
 #include <functional>
 #include <future>
-#include <random>
 
 namespace tlCF {
 
@@ -84,12 +83,12 @@ namespace tlCF {
 
     class Player {
       public:
-        std::future<unsigned char> Play(BoardFieldStatus color, const BitBoard& board, unsigned int timelimit);
+        std::future<unsigned char> Play(BoardFieldStatus color, const BitBoard& board);
         void Reset();
         std::string GetName() const;
 
       protected:
-        virtual std::future<unsigned char> Play_Impl(BoardFieldStatus color, const BitBoard& board, unsigned int timelimit) = 0;
+        virtual std::future<unsigned char> Play_Impl(BoardFieldStatus color, const BitBoard& board) = 0;
         virtual std::string GetName_Impl() const = 0;
         virtual void Reset_Impl() {};
     };
@@ -121,17 +120,4 @@ namespace tlCF {
         unsigned char moves_[42]; //maximum 42 moves
     };
 
-
-    class RandomPlayer : public Player {
-      public:
-        RandomPlayer();
-      private:
-
-        // Inherited via Player
-        virtual std::future<unsigned char> Play_Impl(BoardFieldStatus color, const BitBoard & board, unsigned int timelimit) override;
-        virtual std::string GetName_Impl() const override;
-
-        std::random_device dev_;
-        std::mt19937 engine_;
-    };
 }

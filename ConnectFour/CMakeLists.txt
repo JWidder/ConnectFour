@@ -1,7 +1,7 @@
 
-SET(SOURCES ConnectFour.cpp)
+SET(SOURCES ConnectFour.cpp Players.cpp)
 SET(HEADERS gsl_assert.h)
-SET(PUBLIC Public/ConnectFour.hpp)
+SET(PUBLIC Public/ConnectFour.hpp Public/Players.hpp)
 
 add_library(ConnectFour ${SOURCES} ${HEADERS} ${PUBLIC})
 target_include_directories(ConnectFour
