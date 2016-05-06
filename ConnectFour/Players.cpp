@@ -30,6 +30,9 @@ struct MCResult {
     MCResult() : score(0), count(0) {}
 };
 
+//there seems to be a flaw - the following sequence leads to an unnecessary loss:
+//r3, y3, r4, y2, r6, y5, r5, y3, r3, y5, r5, y4, r4 -> red wins
+//and this sequence is reproducible!
 
 std::future<unsigned char> tlCF::MonteCarlo_ST::Play_Impl(BoardFieldStatus color, const BitBoard & board) {
     result_ = std::promise<unsigned char>();
