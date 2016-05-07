@@ -150,8 +150,10 @@ VictoryStatus tlCF::Board::Test() const {
     return VictoryStatus::Continue;
 }
 
-tlCF::BitBoard::BitBoard() {
+tlCF::BitBoard::BitBoard(uint64_t yellow, uint64_t red) {
     Clear();
+    data_[0] = yellow;
+    data_[1] = red;
 }
 
 tlCF::BitBoard::BitBoard(const BitBoard & b) {
@@ -276,10 +278,15 @@ GameResult tlCF::Game::PlayGame() {
         auto future_move = players_[playerIndex]->Play(static_cast<BoardFieldStatus>(playerIndex+1),board_);
         auto move = future_move.get();
         moves_[moveIndex] = move;
-        playerIndex = (playerIndex + 1) % 2;
+
         if (!board_.CanThrowIn(move)) break; //break off due to illegal move
         else (board_.ThrowIn(move, static_cast<BoardFieldStatus>(playerIndex + 1)));
+
+        playerIndex = (playerIndex + 1) % 2;
+        moveIndex += 1;
+
         if (observer_) observer_(board_);
+
     }
     playerIndex = (playerIndex + 1) % 2; //adjust index back to the one that moved last
     GameResult result;

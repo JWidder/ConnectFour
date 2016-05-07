@@ -34,7 +34,7 @@ TEST_CASE("Result is not 'continue'", "[game]") {
     auto red = std::make_unique<CollumnPlayer>(4);
     tlCF::Game game(yellow.get(), red.get());
     auto result = game.PlayGame();
-    CHECK(result.result == tlCF::VictoryStatus::VictoryRed);
+    CHECK(result.result == tlCF::VictoryStatus::VictoryYellow);
 }
 
 TEST_CASE("Performance Test - Random Player", "[.][performance][game]") {

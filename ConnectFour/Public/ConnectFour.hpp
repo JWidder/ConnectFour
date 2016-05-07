@@ -50,7 +50,7 @@ namespace tlCF {
         const static uint32_t row_count = 6;
         const static uint32_t collumn_count = 7;
 
-        BitBoard();
+        BitBoard(uint64_t yellow=0, uint64_t red=0);
         BitBoard(const BitBoard& b);
         BitBoard& operator=(const BitBoard& b);
 

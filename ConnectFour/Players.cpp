@@ -65,11 +65,20 @@ std::future<unsigned char> tlCF::MonteCarlo_ST::Play_Impl(BoardFieldStatus color
                     VictoryStatus simulation_result;
                     while ((simulation_result = simulation_board.Test()) == tlCF::VictoryStatus::Continue) {
                         stone = stone == red ? yellow : red;
-                        auto selected_collmun = dist(engine);
-                        while (!simulation_board.CanThrowIn(selected_collmun)) {
-                            selected_collmun = dist(engine);
+                        auto selected_collumn = dist(engine);
+                        while (!simulation_board.CanThrowIn(selected_collumn)) {
+                            selected_collumn = dist(engine);
                         }
-                        simulation_board.ThrowIn(selected_collmun, stone);
+                        //override if any collumn leads to victory
+                        /*for (int override_selection = 0; override_selection < 7; ++override_selection) {
+                            auto testboard = simulation_board;
+                            testboard.ThrowIn(override_selection,stone);
+                            if (testboard.Test() != tlCF::VictoryStatus::Continue) {
+                                selected_collumn = override_selection;
+                                break;
+                            }
+                        }*/
+                        simulation_board.ThrowIn(selected_collumn, stone);
                     }
 
                     if (simulation_result == VictoryStatus::Draw) {
