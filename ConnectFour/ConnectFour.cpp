@@ -253,6 +253,10 @@ std::string tlCF::Player::GetName() const {
     return GetName_Impl();
 }
 
+std::string tlCF::Player::GetLogEntry() const {
+    return GetLogEntry_Impl();
+}
+
 tlCF::Game::Game(Player* yellow, Player* red) {
     Expects(yellow != nullptr);
     Expects(red != nullptr);

@@ -87,11 +87,15 @@ namespace tlCF {
         std::future<unsigned char> Play(BoardFieldStatus color, const BitBoard& board);
         void Reset();
         std::string GetName() const;
+        std::string GetLogEntry() const;
 
       protected:
         virtual std::future<unsigned char> Play_Impl(BoardFieldStatus color, const BitBoard& board) = 0;
         virtual std::string GetName_Impl() const = 0;
         virtual void Reset_Impl() {};
+        virtual std::string GetLogEntry_Impl() const {
+            return "";
+        };
     };
 
     struct GameResult {
