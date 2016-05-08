@@ -4,6 +4,7 @@
 #include <memory>
 #include <functional>
 #include <future>
+#include <string>
 
 namespace tlCF {
 

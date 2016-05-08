@@ -1,7 +1,11 @@
 #include "ConnectFour.hpp"
 #include "gsl_assert.h"
 #include <algorithm>
-#include <intrin.h>
+
+#ifdef __MSC_VER
+#  include <intrin.h>
+#  define __builtin_popcountll __popcnt64
+#endif
 
 using namespace tlCF;
 
@@ -180,7 +184,7 @@ bool tlCF::BitBoard::ThrowIn(const uint32_t collumn, const BoardFieldStatus colo
     auto bitMask = 0b111111ull << (collumn*(row_count + 1)); //mask out a collumn
     auto field = (data_[0] | data_[1])& bitMask;
     //since we masked out all other parts of the field, only the used slots in our collumn remain and we can count them
-    auto usedFields = __popcnt64(field);
+    auto usedFields = __builtin_popcountll(field);
     data_[color-1] |= 1ull << (usedFields + collumn*(row_count + 1));
     return true;
 }
@@ -214,7 +218,7 @@ VictoryStatus tlCF::BitBoard::Test() const {
                 0b100000ull << 5 * (row_count + 1) |
                 0b100000ull << 6 * (row_count + 1);
     auto bits = fillStatus & mask;
-    if (__popcnt64(bits) == 7) return VictoryStatus::Draw;
+    if (__builtin_popcountll(bits) == 7) return VictoryStatus::Draw;
     else if (hasWon(yellow)) return VictoryStatus::VictoryYellow;
     else if (hasWon(red)) return VictoryStatus::VictoryRed;
     else return VictoryStatus::Continue;
