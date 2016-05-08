@@ -2,7 +2,7 @@
 #include "gsl_assert.h"
 #include <algorithm>
 
-#ifdef __MSC_VER
+#ifdef _MSC_VER
 #  include <intrin.h>
 #  define __builtin_popcountll __popcnt64
 #endif
