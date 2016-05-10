@@ -4,8 +4,6 @@
 #include <QHboxLayout>
 #include <QPushButton>
 
-
-#include <thread>
 #include "ConnectFour.hpp"
 #include "Players.hpp"
 
@@ -41,7 +39,10 @@ MainWindow::MainWindow() {
     connect(start_game, &QPushButton::clicked, [&]() {
         game_->Reset(false);
         board_->Reset();
-        std::thread t([&]() {
+        if (gameThread_) {
+            gameThread_->join();
+        }
+        gameThread_ = std::make_unique<std::thread>(([&]() {
             QString tmp;
             tmp.append(game_->GetYellow().c_str());
             tmp.append(" vs. ");
@@ -60,11 +61,18 @@ MainWindow::MainWindow() {
                 log_->append("Draw\n");
                 break;
             }
-        });
-        t.detach();
+        }));
     });
 }
 
 void MainWindow::Clear() {
     board_->Reset();
+}
+
+MainWindow::~MainWindow() {
+    if (gameThread_) {
+        game_->terminate();
+        gameThread_->join();
+        gameThread_.reset();
+    }
 }

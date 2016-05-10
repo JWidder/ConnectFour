@@ -1,8 +1,10 @@
 #pragma once
 #include <QMainWindow>
 #include <QTextEdit>
-#include <Board.h>
 
+#include <thread>
+
+#include "Board.h"
 #include "ConnectFour.hpp"
 
 class MainWindow : public QMainWindow {
@@ -10,6 +12,7 @@ class MainWindow : public QMainWindow {
 
   public:
     MainWindow();
+    ~MainWindow();
 
   private slots:
     void Clear();
@@ -19,4 +22,5 @@ class MainWindow : public QMainWindow {
     QTextEdit* log_;
     std::unique_ptr<tlCF::Game> game_;
     std::unique_ptr<tlCF::Player> random_;
+    std::unique_ptr<std::thread> gameThread_;
 };

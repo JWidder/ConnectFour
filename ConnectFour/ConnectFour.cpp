@@ -270,6 +270,7 @@ void tlCF::Game::init() {
     board_.Clear();
     players_[0]->Reset();
     players_[1]->Reset();
+    terminate_ = false;
 }
 
 void tlCF::Game::Reset(bool swapPlayer) {
@@ -299,6 +300,9 @@ GameResult tlCF::Game::PlayGame() {
     unsigned int moveIndex = 0;
     while (board_.Test() == VictoryStatus::Continue) {
         auto future_move = players_[playerIndex]->Play(static_cast<BoardFieldStatus>(playerIndex+1),board_);
+        while (future_move.wait_for(std::chrono::seconds(1)) != std::future_status::ready) {
+            if (terminate_) return GameResult();
+        }
         auto move = future_move.get();
         moves_[moveIndex] = move;
 
@@ -309,7 +313,6 @@ GameResult tlCF::Game::PlayGame() {
         moveIndex += 1;
 
         if (observer_) observer_(board_);
-
     }
     playerIndex = (playerIndex + 1) % 2; //adjust index back to the one that moved last
     GameResult result;

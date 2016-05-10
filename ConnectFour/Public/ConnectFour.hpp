@@ -121,6 +121,10 @@ namespace tlCF {
         std::string GetRed() const;
         std::string GetYellow() const;
 
+        void terminate() {
+            terminate_ = true;
+        }
+
       private:
         void init();
 
@@ -129,6 +133,7 @@ namespace tlCF {
 
         Player* players_[2];
         BitBoard board_;
+        std::atomic<bool> terminate_;
         unsigned char moves_[42]; //maximum 42 moves
     };
 
