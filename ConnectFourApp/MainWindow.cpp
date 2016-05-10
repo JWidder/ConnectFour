@@ -1,7 +1,9 @@
 #include "MainWindow.h"
 
 #include <QVboxLayout>
+#include <QHboxLayout>
 #include <QPushButton>
+
 
 #include <thread>
 #include "ConnectFour.hpp"
@@ -12,12 +14,20 @@ MainWindow::MainWindow() {
 
     QWidget* ui_area = new QWidget(this);
     setCentralWidget(ui_area);
-    QVBoxLayout* mainLayout = new QVBoxLayout;
+    auto* mainLayout = new QHBoxLayout;
+    auto* rightSide = new QVBoxLayout;
+
+    log_ = new QTextEdit(this);
+    mainLayout->addWidget(log_);
+    log_->setReadOnly(true);
+
     board_ = new Board(this);
-    mainLayout->addWidget(board_);
+    rightSide->addWidget(board_);
     QPushButton* start_game = new QPushButton(this);
     start_game->setText("Start");
-    mainLayout->addWidget(start_game);
+    rightSide->addWidget(start_game);
+
+    mainLayout->addLayout(rightSide);
     ui_area->setLayout(mainLayout);
     setWindowTitle("Connect 4");
 
@@ -32,7 +42,24 @@ MainWindow::MainWindow() {
         game_->Reset(false);
         board_->Reset();
         std::thread t([&]() {
-            game_->PlayGame();
+            QString tmp;
+            tmp.append(game_->GetYellow().c_str());
+            tmp.append(" vs. ");
+            tmp.append(game_->GetRed().c_str());
+            tmp.append("\n");
+            log_->append(tmp);
+            auto result = game_->PlayGame();
+            switch (result.result) {
+            case tlCF::VictoryStatus::VictoryRed:
+                log_->append("Red Wins\n");
+                break;
+            case tlCF::VictoryStatus::VictoryYellow:
+                log_->append("Yellow Wins\n");
+                break;
+            case tlCF::VictoryStatus::Draw:
+                log_->append("Draw\n");
+                break;
+            }
         });
         t.detach();
     });

@@ -103,6 +103,10 @@ namespace tlCF {
         std::string yellow;
         VictoryStatus result;
         unsigned char moves[42];
+
+        GameResult(const GameResult& rhs);
+        GameResult() = default;
+        GameResult& operator=(const GameResult& rhs);
     };
 
     class Game {
@@ -113,6 +117,9 @@ namespace tlCF {
 
         GameResult PlayGame();
         void RegisterObserver(std::function<void(tlCF::BitBoard)> observer);
+
+        std::string GetRed() const;
+        std::string GetYellow() const;
 
       private:
         void init();

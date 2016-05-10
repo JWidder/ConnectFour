@@ -279,6 +279,21 @@ void tlCF::Game::Reset(bool swapPlayer) {
     init();
 }
 
+tlCF::GameResult::GameResult(const tlCF::GameResult& rhs)
+    : red(rhs.red)
+    , yellow(rhs.yellow)
+    , result(rhs.result) {
+    std::copy(std::begin(rhs.moves), std::end(rhs.moves), std::begin(moves));
+}
+
+GameResult & tlCF::GameResult::operator=(const GameResult & rhs) {
+    red = rhs.red;
+    yellow = rhs.yellow;
+    result = rhs.result;
+    std::copy(std::begin(rhs.moves), std::end(rhs.moves), std::begin(moves));
+    return *this;
+}
+
 GameResult tlCF::Game::PlayGame() {
     unsigned int playerIndex = 0;
     unsigned int moveIndex = 0;
@@ -308,4 +323,12 @@ GameResult tlCF::Game::PlayGame() {
 
 void tlCF::Game::RegisterObserver(std::function<void(tlCF::BitBoard)> observer) {
     observer_ = observer;
+}
+
+std::string tlCF::Game::GetRed() const {
+    return players_[1]->GetName();
+}
+
+std::string tlCF::Game::GetYellow() const {
+    return players_[0]->GetName();
 }
