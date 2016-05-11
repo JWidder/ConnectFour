@@ -13,6 +13,10 @@
 
 MainWindow::MainWindow() {
 
+    players_.push_back(std::make_shared<tlCF::RandomPlayer>());
+    players_.push_back(std::make_shared<tlCF::MonteCarlo_ST>(2000));
+    players_.push_back(std::make_shared<tlCF::MonteCarlo_ST>(500));
+
     QWidget* ui_area = new QWidget(this);
     setCentralWidget(ui_area);
     auto* mainLayout = new QHBoxLayout;
@@ -25,28 +29,37 @@ MainWindow::MainWindow() {
     //board
     board_ = new Board(this);
     rightSide->addWidget(board_);
+    players_.push_back(std::shared_ptr<tlCF::Player>(board_, [](tlCF::Player*) {}));
     //player configuration
     auto* labelYellow = new QLabel(this);
     labelYellow->setText("Yellow: ");
-    auto* comboYellow = new QComboBox(this);
+    comboYellow_ = new QComboBox(this);
+    for (const auto& i : players_) {
+        comboYellow_->addItem(i->GetName().c_str());
+    }
     auto* yellowLayout = new QHBoxLayout(this);
     yellowLayout->addWidget(labelYellow);
-    yellowLayout->addWidget(comboYellow);
+    yellowLayout->addWidget(comboYellow_);
 
     auto* labelRed = new QLabel(this);
     labelRed->setText("Red: ");
-    auto* comboRed = new QComboBox(this);
+    comboRed_ = new QComboBox(this);
+    for (const auto& i : players_) {
+        comboRed_->addItem(i->GetName().c_str());
+    }
     auto* redLayout = new QHBoxLayout(this);
     redLayout->addWidget(labelRed);
-    redLayout->addWidget(comboRed);
+    redLayout->addWidget(comboRed_);
 
     auto* labelRepetitions = new QLabel(this);
     labelRepetitions->setText("Repetitions: ");
-    auto* lineEditRepetitions = new QLineEdit(this);
-    lineEditRepetitions->setText("1");
+    lineEditRepetitions_ = new QLineEdit(this);
+    lineEditRepetitions_->setText("1");
+    auto* validatorRepetitions = new QIntValidator(1,999, this);
+    lineEditRepetitions_->setValidator(validatorRepetitions);
     auto* layoutRepetitions = new QHBoxLayout(this);
     layoutRepetitions->addWidget(labelRepetitions);
-    layoutRepetitions->addWidget(lineEditRepetitions);
+    layoutRepetitions->addWidget(lineEditRepetitions_);
 
     auto* configLayout = new QHBoxLayout(this);
     configLayout->addLayout(yellowLayout);
@@ -63,17 +76,15 @@ MainWindow::MainWindow() {
     ui_area->setLayout(mainLayout);
     setWindowTitle("Connect 4");
 
-    //initialize game objects
-    random_ = std::make_unique<tlCF::MonteCarlo_ST>();
-    game_ = std::make_unique<tlCF::Game>(board_, random_.get());
-    game_->RegisterObserver([&](tlCF::BitBoard b) {
-        board_->UpdateBoard(b);
-    });
-
     connect(start_game, &QPushButton::clicked, [&]() {
-        game_->Reset(false);
+        auto yellowIndex = comboYellow_->currentIndex();
+        auto redIndex = comboRed_->currentIndex();
+        game_ = std::make_unique<tlCF::Game>(players_[yellowIndex].get(), players_[redIndex].get());
+        game_->RegisterObserver([&](tlCF::BitBoard b) {
+            board_->UpdateBoard(b);
+        });
         board_->Reset();
-        if (gameThread_) {
+        if (gameThread_ && gameThread_->joinable()) {
             gameThread_->join();
         }
         gameThread_ = std::make_unique<std::thread>(([&]() {
@@ -112,3 +123,4 @@ MainWindow::~MainWindow() {
         gameThread_.reset();
     }
 }
+
