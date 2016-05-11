@@ -3,6 +3,9 @@
 #include <QVboxLayout>
 #include <QHboxLayout>
 #include <QPushButton>
+#include <QLabel>
+#include <QComboBox>
+#include <QLineEdit>
 
 #include "ConnectFour.hpp"
 #include "Players.hpp"
@@ -19,8 +22,39 @@ MainWindow::MainWindow() {
     mainLayout->addWidget(log_);
     log_->setReadOnly(true);
 
+    //board
     board_ = new Board(this);
     rightSide->addWidget(board_);
+    //player configuration
+    auto* labelYellow = new QLabel(this);
+    labelYellow->setText("Yellow: ");
+    auto* comboYellow = new QComboBox(this);
+    auto* yellowLayout = new QHBoxLayout(this);
+    yellowLayout->addWidget(labelYellow);
+    yellowLayout->addWidget(comboYellow);
+    
+    auto* labelRed = new QLabel(this);
+    labelRed->setText("Red: ");
+    auto* comboRed = new QComboBox(this);
+    auto* redLayout = new QHBoxLayout(this);
+    redLayout->addWidget(labelRed);
+    redLayout->addWidget(comboRed);
+
+    auto* labelRepetitions = new QLabel(this);
+    labelRepetitions->setText("Repetitions: ");
+    auto* lineEditRepetitions = new QLineEdit(this);
+    lineEditRepetitions->setText("1");
+    auto* layoutRepetitions = new QHBoxLayout(this);
+    layoutRepetitions->addWidget(labelRepetitions);
+    layoutRepetitions->addWidget(lineEditRepetitions);
+    
+    auto* configLayout = new QHBoxLayout(this);
+    configLayout->addLayout(yellowLayout);
+    configLayout->addLayout(redLayout);
+    configLayout->addLayout(layoutRepetitions);
+    rightSide->addLayout(configLayout);
+    
+    //start button
     QPushButton* start_game = new QPushButton(this);
     start_game->setText("Start");
     rightSide->addWidget(start_game);
@@ -60,6 +94,8 @@ MainWindow::MainWindow() {
             case tlCF::VictoryStatus::Draw:
                 log_->append("Draw\n");
                 break;
+            default:
+                throw std::logic_error("Game should not end with 'Continue' state");
             }
         }));
     });
