@@ -6,6 +6,8 @@
 #include <QLabel>
 #include <QComboBox>
 #include <QLineEdit>
+#include <QScrollBar>
+#include <QSpinBox>
 
 #include "ConnectFour.hpp"
 #include "Players.hpp"
@@ -25,6 +27,7 @@ MainWindow::MainWindow() {
     log_ = new QTextEdit(this);
     mainLayout->addWidget(log_);
     log_->setReadOnly(true);
+    log_->setUpdatesEnabled(true);
 
     //board
     board_ = new Board(this);
@@ -53,10 +56,9 @@ MainWindow::MainWindow() {
 
     auto* labelRepetitions = new QLabel(this);
     labelRepetitions->setText("Repetitions: ");
-    lineEditRepetitions_ = new QLineEdit(this);
-    lineEditRepetitions_->setText("1");
-    auto* validatorRepetitions = new QIntValidator(1,999, this);
-    lineEditRepetitions_->setValidator(validatorRepetitions);
+    lineEditRepetitions_ = new QSpinBox(this);
+    lineEditRepetitions_->setValue(1);
+    lineEditRepetitions_->setRange(1, 999);
     auto* layoutRepetitions = new QHBoxLayout(this);
     layoutRepetitions->addWidget(labelRepetitions);
     layoutRepetitions->addWidget(lineEditRepetitions_);
@@ -76,60 +78,77 @@ MainWindow::MainWindow() {
     ui_area->setLayout(mainLayout);
     setWindowTitle("Connect 4");
 
-    connect(this,&MainWindow::appendToLog, log_,&QTextEdit::append, Qt::QueuedConnection);
-
+    connect(this,&MainWindow::appendToLogTxt, log_,&QTextEdit::append, Qt::QueuedConnection);
+    connect(this, &MainWindow::setLogTxtFont, log_, &QTextEdit::setCurrentFont, Qt::QueuedConnection);
     connect(start_game, &QPushButton::clicked, [&]() {
+        std::lock_guard<std::mutex> lock(startGameMutex_);
         auto repetitions = lineEditRepetitions_->text().toInt();
         auto yellowIndex = comboYellow_->currentIndex();
         auto redIndex = comboRed_->currentIndex();
 
+            
         auto red = players_[redIndex];
         auto yellow = players_[yellowIndex];
 
+        this->terminating_ = true;
+        if (game_)
+        {
+            game_->terminate();
+        }
         if (gameThread_ && gameThread_->joinable()) {
             gameThread_->join();
         }
+        this->terminating_ = false;
 
-        gameThread_ = std::make_unique<std::thread>(([&,red_player = red, yellow_player = yellow, rep = repetitions]() {
-            for (int i = 0; i < rep; ++i) {
-                if (this->terminating_) {
-                    break;
-                }
-                board_->Reset();
-                board_->update();
-
-                game_ = std::make_unique<tlCF::Game>(yellow_player.get(), red_player.get());
-                game_->RegisterObserver([&](tlCF::BitBoard b) {
-                    board_->UpdateBoard(b);
-                });
-                game_->RegisterLogger([&](const std::string& log) {
-                    this->appendToLog(log.c_str());
-                });
-                QString tmp;
-                tmp.append(game_->GetYellow().c_str());
-                tmp.append(" vs. ");
-                tmp.append(game_->GetRed().c_str());
-                tmp.append("\n");
-                emit this->appendToLog(tmp);
-                board_->update();
-                auto result = game_->PlayGame();
-                switch (result.result) {
-                case tlCF::VictoryStatus::VictoryRed:
-                    emit this->appendToLog("Red Wins\n");
-                    break;
-                case tlCF::VictoryStatus::VictoryYellow:
-                    emit this->appendToLog("Yellow Wins\n");
-                    break;
-                case tlCF::VictoryStatus::Draw:
-                    emit this->appendToLog("Draw\n");
-                    break;
-                default:
-                    break;
-                }
-                this->WriteGameRecord(result);
-            }
-        }));
+        gameThread_ = std::make_unique<std::thread>(&MainWindow::runGame, this, red, yellow, repetitions);
     });
+}
+
+void MainWindow::runGame(std::shared_ptr<tlCF::Player> red_player, std::shared_ptr<tlCF::Player> yellow_player, int rep) {
+    for (int i = 0; i < rep; ++i) {
+        if (this->terminating_) {
+            break;
+        }
+        board_->Reset();
+        board_->update();
+
+        game_ = std::make_unique<tlCF::Game>(yellow_player.get(), red_player.get());
+        game_->RegisterObserver([&](tlCF::BitBoard b) {
+            board_->UpdateBoard(b);
+        });
+        game_->RegisterLogger([&](const std::string& log) {
+            this->appendToLog(log.c_str());
+        });
+        QString tmp;
+        tmp.append(game_->GetYellow().c_str());
+        tmp.append(" vs. ");
+        tmp.append(game_->GetRed().c_str());
+        tmp.append("\n");
+        appendToLog(tmp, QFont("Courier", 13, QFont::Bold, false));
+        auto result = game_->PlayGame();
+        switch (result.result) {
+        case tlCF::VictoryStatus::VictoryRed:
+            appendToLog("Red Wins\n");
+            break;
+        case tlCF::VictoryStatus::VictoryYellow:
+            appendToLog("Yellow Wins\n");
+            break;
+        case tlCF::VictoryStatus::Draw:
+            appendToLog("Draw\n");
+            break;
+        case tlCF::VictoryStatus::Aborted:
+            appendToLog("Game aborted\n");
+            break;
+        default:
+            break;
+        }
+        this->WriteGameRecord(result);
+    }
+}
+
+void MainWindow::appendToLog(const QString& message, const QFont& font) {
+    emit this->setLogTxtFont(font);
+    emit this->appendToLogTxt(message);
 }
 
 void MainWindow::Clear() {

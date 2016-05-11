@@ -9,7 +9,7 @@
 namespace tlCF {
 
     enum BoardFieldStatus : uint8_t { empty = 0, yellow = 1, red = 2};
-    enum class VictoryStatus { Continue, VictoryYellow = yellow, VictoryRed = red, Draw};
+    enum class VictoryStatus { Continue, VictoryYellow = yellow, VictoryRed = red, Draw, Aborted };
 
     uint32_t GetMask(uint32_t bitPosition);
 

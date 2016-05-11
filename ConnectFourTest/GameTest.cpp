@@ -26,6 +26,10 @@ class CollumnPlayer : public tlCF::Player {
         return "CollumnPlayer";
     }
 
+    virtual std::string GetInitialState_Impl() const override {
+        return "";
+    }
+
     unsigned char collumn_;
 };
 

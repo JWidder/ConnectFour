@@ -41,11 +41,11 @@ struct MCResult {
 //and this sequence is reproducible!
 
 std::future<unsigned char> tlCF::MonteCarlo_ST::Play_Impl(BoardFieldStatus color, const BitBoard & board) {
-    result_ = std::promise<unsigned char>();
-    auto retval = result_.get_future();
     if (thread_ && thread_->joinable()) {
         thread_->join();
-    }
+    }    
+    result_ = std::promise<unsigned char>();
+    auto retval = result_.get_future();
     thread_ = std::make_unique<std::thread>([=, &result = result_]() {
         MCResult data[7];
         auto startposition = board;

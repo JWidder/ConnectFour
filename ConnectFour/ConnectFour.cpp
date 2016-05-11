@@ -323,7 +323,12 @@ GameResult tlCF::Game::PlayGame() {
         auto now = std::chrono::high_resolution_clock::now();
         auto future_move = players_[playerIndex]->Play(static_cast<BoardFieldStatus>(playerIndex+1),board_);
         while (future_move.wait_for(std::chrono::seconds(1)) != std::future_status::ready) {
-            if (terminate_) return GameResult();
+            if (terminate_)
+            {
+                GameResult result;
+                result.result = VictoryStatus::Aborted;
+                return result;
+            }
         }
         auto move = future_move.get();
         moves_[moveIndex] = move;
