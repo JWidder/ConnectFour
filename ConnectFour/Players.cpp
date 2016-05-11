@@ -37,7 +37,10 @@ struct MCResult {
 std::future<unsigned char> tlCF::MonteCarlo_ST::Play_Impl(BoardFieldStatus color, const BitBoard & board) {
     result_ = std::promise<unsigned char>();
     auto retval = result_.get_future();
-    std::thread thread([=, &result = result_]() {
+    if (thread_ && thread_->joinable()) {
+        thread_->join();
+    }
+    thread_ = std::make_unique<std::thread>([=, &result = result_]() {
         MCResult data[7];
         auto startposition = board;
         const int batch_size = 1000;
@@ -93,7 +96,6 @@ std::future<unsigned char> tlCF::MonteCarlo_ST::Play_Impl(BoardFieldStatus color
         }
         result.set_value(index);
     });
-    thread.detach();
     return retval;
 }
 

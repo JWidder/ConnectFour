@@ -2,6 +2,8 @@
 #include "ConnectFour.hpp"
 
 #include <random>
+#include <thread>
+#include <memory>
 
 namespace tlCF {
 
@@ -22,6 +24,11 @@ namespace tlCF {
 
       public:
         MonteCarlo_ST(unsigned int timelimit = 2000) : timelimit_in_ms_(timelimit) {}
+        ~MonteCarlo_ST() {
+            if (thread_ && thread_->joinable()) {
+                thread_->join();
+            }
+        }
       private:
         // Inherited via Player
         virtual std::future<unsigned char> Play_Impl(BoardFieldStatus color, const BitBoard & board) override final;
@@ -30,6 +37,7 @@ namespace tlCF {
         //member
         unsigned int timelimit_in_ms_;
         std::promise<unsigned char> result_;
+        std::unique_ptr<std::thread> thread_;
     };
 
 }

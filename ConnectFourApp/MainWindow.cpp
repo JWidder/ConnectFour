@@ -32,7 +32,7 @@ MainWindow::MainWindow() {
     auto* yellowLayout = new QHBoxLayout(this);
     yellowLayout->addWidget(labelYellow);
     yellowLayout->addWidget(comboYellow);
-    
+
     auto* labelRed = new QLabel(this);
     labelRed->setText("Red: ");
     auto* comboRed = new QComboBox(this);
@@ -47,13 +47,13 @@ MainWindow::MainWindow() {
     auto* layoutRepetitions = new QHBoxLayout(this);
     layoutRepetitions->addWidget(labelRepetitions);
     layoutRepetitions->addWidget(lineEditRepetitions);
-    
+
     auto* configLayout = new QHBoxLayout(this);
     configLayout->addLayout(yellowLayout);
     configLayout->addLayout(redLayout);
     configLayout->addLayout(layoutRepetitions);
     rightSide->addLayout(configLayout);
-    
+
     //start button
     QPushButton* start_game = new QPushButton(this);
     start_game->setText("Start");
@@ -95,7 +95,7 @@ MainWindow::MainWindow() {
                 log_->append("Draw\n");
                 break;
             default:
-                throw std::logic_error("Game should not end with 'Continue' state");
+                break;
             }
         }));
     });
