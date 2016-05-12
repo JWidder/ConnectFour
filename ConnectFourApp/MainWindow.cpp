@@ -77,38 +77,49 @@ MainWindow::MainWindow() {
     setWindowTitle("Connect 4");
 
     connect(start_game, &QPushButton::clicked, [&]() {
+        auto repetitions = lineEditRepetitions_->text().toInt();
         auto yellowIndex = comboYellow_->currentIndex();
         auto redIndex = comboRed_->currentIndex();
-        game_ = std::make_unique<tlCF::Game>(players_[yellowIndex].get(), players_[redIndex].get());
-        game_->RegisterObserver([&](tlCF::BitBoard b) {
-            board_->UpdateBoard(b);
-        });
-        board_->Reset();
-        if (gameThread_ && gameThread_->joinable()) {
-            gameThread_->join();
-        }
-        gameThread_ = std::make_unique<std::thread>(([&]() {
-            QString tmp;
-            tmp.append(game_->GetYellow().c_str());
-            tmp.append(" vs. ");
-            tmp.append(game_->GetRed().c_str());
-            tmp.append("\n");
-            log_->append(tmp);
-            auto result = game_->PlayGame();
-            switch (result.result) {
-            case tlCF::VictoryStatus::VictoryRed:
-                log_->append("Red Wins\n");
-                break;
-            case tlCF::VictoryStatus::VictoryYellow:
-                log_->append("Yellow Wins\n");
-                break;
-            case tlCF::VictoryStatus::Draw:
-                log_->append("Draw\n");
-                break;
-            default:
-                break;
+        bool swap = false;
+        for (int i = 0; i < repetitions; ++i) {
+            if (!swap) {
+                game_ = std::make_unique<tlCF::Game>(players_[yellowIndex].get(), players_[redIndex].get());
             }
-        }));
+            else {
+                game_ = std::make_unique<tlCF::Game>(players_[redIndex].get(), players_[yellowIndex].get());
+            }
+            swap = !swap;
+            game_->RegisterObserver([&](tlCF::BitBoard b) {
+                board_->UpdateBoard(b);
+            });
+            board_->Reset();
+            if (gameThread_ && gameThread_->joinable()) {
+                gameThread_->join();
+            }
+            gameThread_ = std::make_unique<std::thread>(([&]() {
+                QString tmp;
+                tmp.append(game_->GetYellow().c_str());
+                tmp.append(" vs. ");
+                tmp.append(game_->GetRed().c_str());
+                tmp.append("\n");
+                log_->append(tmp);
+                auto result = game_->PlayGame();
+                switch (result.result) {
+                case tlCF::VictoryStatus::VictoryRed:
+                    log_->append("Red Wins\n");
+                    break;
+                case tlCF::VictoryStatus::VictoryYellow:
+                    log_->append("Yellow Wins\n");
+                    break;
+                case tlCF::VictoryStatus::Draw:
+                    log_->append("Draw\n");
+                    break;
+                default:
+                    break;
+                }
+
+            }));
+        }
     });
 }
 
