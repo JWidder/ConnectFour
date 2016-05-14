@@ -313,6 +313,7 @@ GameResult tlCF::Game::PlayGame() {
         moveIndex += 1;
 
         if (observer_) observer_(board_);
+        std::this_thread::sleep_for(std::chrono::microseconds(20));
     }
     playerIndex = (playerIndex + 1) % 2; //adjust index back to the one that moved last
     GameResult result;

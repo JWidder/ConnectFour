@@ -80,22 +80,16 @@ MainWindow::MainWindow() {
         auto repetitions = lineEditRepetitions_->text().toInt();
         auto yellowIndex = comboYellow_->currentIndex();
         auto redIndex = comboRed_->currentIndex();
-        bool swap = false;
         for (int i = 0; i < repetitions; ++i) {
-            if (!swap) {
-                game_ = std::make_unique<tlCF::Game>(players_[yellowIndex].get(), players_[redIndex].get());
-            }
-            else {
-                game_ = std::make_unique<tlCF::Game>(players_[redIndex].get(), players_[yellowIndex].get());
-            }
-            swap = !swap;
-            game_->RegisterObserver([&](tlCF::BitBoard b) {
-                board_->UpdateBoard(b);
-            });
             board_->Reset();
             if (gameThread_ && gameThread_->joinable()) {
                 gameThread_->join();
             }
+            game_ = std::make_unique<tlCF::Game>(players_[yellowIndex].get(), players_[redIndex].get());
+            game_->RegisterObserver([&](tlCF::BitBoard b) {
+                board_->UpdateBoard(b);
+                std::this_thread::sleep_for(std::chrono::microseconds(20));
+            });
             gameThread_ = std::make_unique<std::thread>(([&]() {
                 QString tmp;
                 tmp.append(game_->GetYellow().c_str());
@@ -103,6 +97,7 @@ MainWindow::MainWindow() {
                 tmp.append(game_->GetRed().c_str());
                 tmp.append("\n");
                 log_->append(tmp);
+                board_->update();
                 auto result = game_->PlayGame();
                 switch (result.result) {
                 case tlCF::VictoryStatus::VictoryRed:
