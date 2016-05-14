@@ -1,5 +1,6 @@
 #pragma once
 #include <QWidget>
+#include <QTimer>
 
 #include "ConnectFour.hpp"
 #include <atomic>
@@ -10,10 +11,10 @@ class Board : public QWidget, public tlCF::Player {
   public:
     Board(QWidget* parent = nullptr);
 
-    void UpdateBoard(tlCF::BitBoard board);
-
   public slots:
     void Reset();
+    void UpdateBoard(tlCF::BitBoard board);
+    void UpdateGui();
 
   protected:
     void paintEvent(QPaintEvent* event) Q_DECL_OVERRIDE;
@@ -22,8 +23,9 @@ class Board : public QWidget, public tlCF::Player {
 
 
   private:
-    tlCF::BitBoard board_;
+    std::unique_ptr<tlCF::BitBoard> board_;
     std::atomic<bool> promise_already_set_;
+    QTimer* timer_;
 
     //threading
     std::promise<unsigned char> move_;

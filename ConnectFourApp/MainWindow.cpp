@@ -76,19 +76,21 @@ MainWindow::MainWindow() {
     ui_area->setLayout(mainLayout);
     setWindowTitle("Connect 4");
 
+    auto r1 = connect(this, &MainWindow::boardUpdated, board_, &Board::UpdateBoard,Qt::QueuedConnection);
+
     connect(start_game, &QPushButton::clicked, [&]() {
         auto repetitions = lineEditRepetitions_->text().toInt();
         auto yellowIndex = comboYellow_->currentIndex();
         auto redIndex = comboRed_->currentIndex();
         for (int i = 0; i < repetitions; ++i) {
             board_->Reset();
+            board_->update();
             if (gameThread_ && gameThread_->joinable()) {
                 gameThread_->join();
             }
             game_ = std::make_unique<tlCF::Game>(players_[yellowIndex].get(), players_[redIndex].get());
             game_->RegisterObserver([&](tlCF::BitBoard b) {
                 board_->UpdateBoard(b);
-                std::this_thread::sleep_for(std::chrono::microseconds(20));
             });
             gameThread_ = std::make_unique<std::thread>(([&]() {
                 QString tmp;

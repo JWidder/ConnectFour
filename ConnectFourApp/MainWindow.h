@@ -16,6 +16,9 @@ class MainWindow : public QMainWindow {
     MainWindow();
     ~MainWindow();
 
+  signals:
+    void boardUpdated(tlCF::BitBoard board);
+
   private slots:
     void Clear();
 
