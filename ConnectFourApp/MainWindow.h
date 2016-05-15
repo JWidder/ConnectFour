@@ -34,4 +34,5 @@ class MainWindow : public QMainWindow {
     QComboBox* comboRed_;
     std::unique_ptr<tlCF::Game> game_;
     std::unique_ptr<std::thread> gameThread_;
+    std::atomic<bool> terminating_;
 };

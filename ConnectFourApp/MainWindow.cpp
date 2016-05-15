@@ -12,7 +12,7 @@
 
 
 MainWindow::MainWindow() {
-
+    terminating_ = false;
     players_.push_back(std::make_shared<tlCF::RandomPlayer>());
     players_.push_back(std::make_shared<tlCF::MonteCarlo_ST>(2000));
     players_.push_back(std::make_shared<tlCF::MonteCarlo_ST>(500));
@@ -91,6 +91,9 @@ MainWindow::MainWindow() {
 
         gameThread_ = std::make_unique<std::thread>(([&,red_player = red, yellow_player = yellow, rep = repetitions]() {
             for (int i = 0; i < rep; ++i) {
+                if (this->terminating_) {
+                    break;
+                }
                 board_->Reset();
                 board_->update();
 
@@ -130,6 +133,7 @@ void MainWindow::Clear() {
 
 MainWindow::~MainWindow() {
     if (gameThread_) {
+        terminating_ = true;
         game_->terminate();
         gameThread_->join();
         gameThread_.reset();
