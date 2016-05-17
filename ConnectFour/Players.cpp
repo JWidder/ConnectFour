@@ -66,6 +66,7 @@ std::future<unsigned char> tlCF::MonteCarlo_ST::Play_Impl(BoardFieldStatus color
                     simulation_board.ThrowIn(slot, stone);
                     //simulation loop
                     VictoryStatus simulation_result;
+                    int moveCount = 0;
                     while ((simulation_result = simulation_board.Test()) == tlCF::VictoryStatus::Continue) {
                         stone = stone == red ? yellow : red;
                         auto selected_collumn = dist(engine);
@@ -73,13 +74,14 @@ std::future<unsigned char> tlCF::MonteCarlo_ST::Play_Impl(BoardFieldStatus color
                             selected_collumn = dist(engine);
                         }
                         simulation_board.ThrowIn(selected_collumn, stone);
+                        moveCount += 1;
                     }
 
                     if (simulation_result == VictoryStatus::Draw) {
-                        data[slot].score += draw_score;
+                        data[slot].score += (7*6-moveCount)*draw_score;
                     }
                     else if (static_cast<int>(simulation_result) == color) {
-                        data[slot].score += victory_score;
+                        data[slot].score += (7 * 6 - moveCount)*victory_score;
                     }
                 }
                 data[slot].count += batch_size;
