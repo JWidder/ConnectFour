@@ -126,6 +126,7 @@ MainWindow::MainWindow() {
                 default:
                     break;
                 }
+                this->WriteGameRecord(result);
             }
         }));
     });
@@ -142,5 +143,9 @@ MainWindow::~MainWindow() {
         gameThread_->join();
         gameThread_.reset();
     }
+}
+
+void MainWindow::WriteGameRecord(tlCF::GameResult result) {
+    db_.AddGameRecord(result);
 }
 

@@ -16,6 +16,8 @@ class MainWindow : public QMainWindow {
   public:
     MainWindow();
     ~MainWindow();
+    
+    void WriteGameRecord(tlCF::GameResult result);
 
   signals:
     void boardUpdated(tlCF::BitBoard board);

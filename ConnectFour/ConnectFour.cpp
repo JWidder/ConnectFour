@@ -267,7 +267,7 @@ tlCF::Game::Game(Player* yellow, Player* red) {
 }
 
 void tlCF::Game::init() {
-    std::fill(std::begin(moves_), std::end(moves_), empty);
+    std::fill(std::begin(moves_), std::end(moves_), 0xff);
     board_.Clear();
     players_[0]->Reset();
     players_[1]->Reset();
@@ -279,6 +279,10 @@ void tlCF::Game::Reset(bool swapPlayer) {
         std::swap(players_[0], players_[1]);
     }
     init();
+}
+
+tlCF::GameResult::GameResult() {
+    std::fill(std::begin(moves),std::end(moves),0xff);
 }
 
 tlCF::GameResult::GameResult(const tlCF::GameResult& rhs)

@@ -3,8 +3,8 @@
 #include <QMouseEvent>
 
 Board::Board(QWidget* parent)
-    : promise_already_set_(false)
-    , board_(new tlCF::BitBoard())
+    : board_(new tlCF::BitBoard())
+    , promise_already_set_(false)
     , timer_(new QTimer(this)) {
     this->setMinimumSize(700, 600);
     this->setMaximumSize(700, 600);

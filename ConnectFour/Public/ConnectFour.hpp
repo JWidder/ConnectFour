@@ -105,7 +105,7 @@ namespace tlCF {
         unsigned char moves[42];
 
         GameResult(const GameResult& rhs);
-        GameResult() = default;
+        GameResult();
         GameResult& operator=(const GameResult& rhs);
     };
 
