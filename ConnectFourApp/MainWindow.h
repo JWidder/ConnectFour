@@ -8,6 +8,7 @@
 
 #include "Board.h"
 #include "ConnectFour.hpp"
+#include "Database.h"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -18,6 +19,7 @@ class MainWindow : public QMainWindow {
 
   signals:
     void boardUpdated(tlCF::BitBoard board);
+    void appendToLog(const QString& message);
 
   private slots:
     void Clear();
@@ -35,4 +37,5 @@ class MainWindow : public QMainWindow {
     std::unique_ptr<tlCF::Game> game_;
     std::unique_ptr<std::thread> gameThread_;
     std::atomic<bool> terminating_;
+    DataBase db_;
 };

@@ -76,6 +76,7 @@ MainWindow::MainWindow() {
     ui_area->setLayout(mainLayout);
     setWindowTitle("Connect 4");
 
+    connect(this,&MainWindow::appendToLog, log_,&QTextEdit::append, Qt::QueuedConnection);
 
     connect(start_game, &QPushButton::clicked, [&]() {
         auto repetitions = lineEditRepetitions_->text().toInt();
@@ -106,18 +107,18 @@ MainWindow::MainWindow() {
                 tmp.append(" vs. ");
                 tmp.append(game_->GetRed().c_str());
                 tmp.append("\n");
-                log_->append(tmp);
+                emit this->appendToLog(tmp);
                 board_->update();
                 auto result = game_->PlayGame();
                 switch (result.result) {
                 case tlCF::VictoryStatus::VictoryRed:
-                    log_->append("Red Wins\n");
+                    this->appendToLog("Red Wins\n");
                     break;
                 case tlCF::VictoryStatus::VictoryYellow:
-                    log_->append("Yellow Wins\n");
+                    this->appendToLog("Yellow Wins\n");
                     break;
                 case tlCF::VictoryStatus::Draw:
-                    log_->append("Draw\n");
+                    this->appendToLog("Draw\n");
                     break;
                 default:
                     break;
