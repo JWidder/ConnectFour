@@ -88,6 +88,7 @@ namespace tlCF {
         void Reset();
         std::string GetName() const;
         std::string GetLogEntry() const;
+        std::string GetInitialState() const;
 
       protected:
         virtual std::future<unsigned char> Play_Impl(BoardFieldStatus color, const BitBoard& board) = 0;
@@ -96,11 +97,14 @@ namespace tlCF {
         virtual std::string GetLogEntry_Impl() const {
             return "";
         };
+        virtual std::string GetInitialState_Impl() const = 0;
     };
 
     struct GameResult {
-        std::string red;
         std::string yellow;
+        std::string red;
+        std::string initialYellow;
+        std::string initialRed;
         VictoryStatus result;
         unsigned char moves[42];
 

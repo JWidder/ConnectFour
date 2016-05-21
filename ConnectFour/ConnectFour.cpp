@@ -258,6 +258,10 @@ std::string tlCF::Player::GetLogEntry() const {
     return GetLogEntry_Impl();
 }
 
+std::string tlCF::Player::GetInitialState() const {
+    return GetInitialState_Impl();
+}
+
 tlCF::Game::Game(Player* yellow, Player* red) {
     Expects(yellow != nullptr);
     Expects(red != nullptr);
@@ -286,15 +290,19 @@ tlCF::GameResult::GameResult() {
 }
 
 tlCF::GameResult::GameResult(const tlCF::GameResult& rhs)
-    : red(rhs.red)
-    , yellow(rhs.yellow)
-    , result(rhs.result) {
+    : yellow(rhs.yellow)
+    , red(rhs.red)
+    , initialYellow(rhs.initialYellow)
+    , initialRed(rhs.initialRed)
+    , result(rhs.result){
     std::copy(std::begin(rhs.moves), std::end(rhs.moves), std::begin(moves));
 }
 
 GameResult & tlCF::GameResult::operator=(const GameResult & rhs) {
     red = rhs.red;
     yellow = rhs.yellow;
+    initialYellow = rhs.initialYellow;
+    initialRed = rhs.initialRed;
     result = rhs.result;
     std::copy(std::begin(rhs.moves), std::end(rhs.moves), std::begin(moves));
     return *this;
@@ -303,6 +311,14 @@ GameResult & tlCF::GameResult::operator=(const GameResult & rhs) {
 GameResult tlCF::Game::PlayGame() {
     unsigned int playerIndex = 0;
     unsigned int moveIndex = 0;
+    std::string initialYellow = players_[0]->GetInitialState();
+    std::string initialRed = players_[1]->GetInitialState();
+    if (logging_) {
+        std::stringstream log;
+        log<<"Initial State Yellow("<<players_[0]->GetName()<<"): "<<initialYellow<<"\n";
+        log<<"Initial State Red("<<players_[1]->GetName()<<"): "<<initialRed<<"\n";
+        logging_(log.str());
+    }
     while (board_.Test() == VictoryStatus::Continue) {
         auto now = std::chrono::high_resolution_clock::now();
         auto future_move = players_[playerIndex]->Play(static_cast<BoardFieldStatus>(playerIndex+1),board_);
@@ -334,6 +350,8 @@ GameResult tlCF::Game::PlayGame() {
     GameResult result;
     result.yellow = players_[0]->GetName();
     result.red = players_[1]->GetName();
+    result.initialYellow = initialYellow;
+    result.initialRed = initialRed;
     result.result = (board_.Test() == VictoryStatus::Continue) ? static_cast<VictoryStatus>(playerIndex + 1) : board_.Test();
     std::copy(std::begin(moves_), std::end(moves_),std::begin(result.moves));
     Ensures(result.result != VictoryStatus::Continue);

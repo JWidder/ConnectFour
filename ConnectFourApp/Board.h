@@ -33,4 +33,5 @@ class Board : public QWidget, public tlCF::Player {
     // Inherited via Player
     virtual std::future<unsigned char> Play_Impl(tlCF::BoardFieldStatus color, const tlCF::BitBoard & board) override final;
     virtual std::string GetName_Impl() const override final;
+    virtual std::string GetInitialState_Impl() const override final;
 };

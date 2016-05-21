@@ -12,7 +12,7 @@ DataBase::DataBase()
     }
     
     QSqlQuery query;
-    query.prepare("CREATE TABLE IF NOT EXISTS games (gamerecord TEXT PRIMARY KEY, yellow TEXT, red TEXT, winner INT);");
+    query.prepare("CREATE TABLE IF NOT EXISTS games (gamerecord TEXT PRIMARY KEY, yellow TEXT, red TEXT, winner INT, initialYellow TEXT, initialRed TEXT);");
     query.exec();
 }
 
@@ -27,12 +27,16 @@ void DataBase::AddGameRecord(const tlCF::GameResult& result) {
     QString gamerecord = game.str().c_str();
     QString yellow = result.yellow.c_str();
     QString red = result.red.c_str();
+    QString iy = result.initialYellow.c_str();
+    QString ir = result.initialRed.c_str();
     int winnerIndex = static_cast<int>(result.result);
     QSqlQuery query;
-    query.prepare("INSERT INTO games (gamerecord, yellow, red, winner) VALUES (:gamerecord, :yellow, :red, :winner);");
+    query.prepare("INSERT INTO games (gamerecord, yellow, red, winner, initialYellow, initialRed) VALUES (:gamerecord, :yellow, :red, :winner, :initialYellow, :initialRed);");
     query.bindValue(":gamerecord", gamerecord);
     query.bindValue(":yellow", yellow);
     query.bindValue(":red", red);
     query.bindValue(":winner", winnerIndex);
-    auto exec_result = query.exec();
+    query.bindValue(":initialYellow", iy);
+    query.bindValue(":initialRed", ir);
+    query.exec();
 }

@@ -23,6 +23,12 @@ std::string tlCF::RandomPlayer::GetName_Impl() const {
     return "RandomPlayer";
 }
 
+std::string tlCF::RandomPlayer::GetInitialState_Impl() const {
+    std::stringstream state;
+    state << engine_;
+    return state.str();
+}
+
 struct MCResult {
     uint32_t score;
     uint32_t count;
@@ -46,9 +52,7 @@ std::future<unsigned char> tlCF::MonteCarlo_ST::Play_Impl(BoardFieldStatus color
         const int batch_size = 1000;
         const int draw_score = 1;
         const int victory_score = 2;
-        //initialize random number engine
-        std::random_device dev;
-        std::mt19937 engine(dev());
+        
         std::uniform_int_distribution<> dist(0, 6);
         //get "now"
         auto now = std::chrono::high_resolution_clock::now();
@@ -69,9 +73,9 @@ std::future<unsigned char> tlCF::MonteCarlo_ST::Play_Impl(BoardFieldStatus color
                     int moveCount = 0;
                     while ((simulation_result = simulation_board.Test()) == tlCF::VictoryStatus::Continue) {
                         stone = stone == red ? yellow : red;
-                        auto selected_collumn = dist(engine);
+                        auto selected_collumn = dist(engine_);
                         while (!simulation_board.CanThrowIn(selected_collumn)) {
-                            selected_collumn = dist(engine);
+                            selected_collumn = dist(engine_);
                         }
                         simulation_board.ThrowIn(selected_collumn, stone);
                         moveCount += 1;
@@ -106,3 +110,11 @@ std::string tlCF::MonteCarlo_ST::GetName_Impl() const {
     result << "MonteCarlo_ST_" << timelimit_in_ms_;
     return result.str();
 }
+
+std::string tlCF::MonteCarlo_ST::GetInitialState_Impl() const {
+    std::stringstream state;
+    state << timelimit_in_ms_<<",";
+    state << engine_;
+    return state.str();
+}
+

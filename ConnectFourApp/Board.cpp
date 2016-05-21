@@ -65,3 +65,7 @@ std::future<unsigned char> Board::Play_Impl(tlCF::BoardFieldStatus color, const 
 std::string Board::GetName_Impl() const {
     return "Human";
 }
+
+std::string Board::GetInitialState_Impl() const {
+    return "";
+}
