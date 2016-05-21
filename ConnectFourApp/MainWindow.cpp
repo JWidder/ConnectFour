@@ -102,6 +102,9 @@ MainWindow::MainWindow() {
                 game_->RegisterObserver([&](tlCF::BitBoard b) {
                     board_->UpdateBoard(b);
                 });
+                game_->RegisterLogger([&](const std::string& log) {
+                    this->appendToLog(log.c_str());
+                });
                 QString tmp;
                 tmp.append(game_->GetYellow().c_str());
                 tmp.append(" vs. ");
@@ -112,13 +115,13 @@ MainWindow::MainWindow() {
                 auto result = game_->PlayGame();
                 switch (result.result) {
                 case tlCF::VictoryStatus::VictoryRed:
-                    this->appendToLog("Red Wins\n");
+                    emit this->appendToLog("Red Wins\n");
                     break;
                 case tlCF::VictoryStatus::VictoryYellow:
-                    this->appendToLog("Yellow Wins\n");
+                    emit this->appendToLog("Yellow Wins\n");
                     break;
                 case tlCF::VictoryStatus::Draw:
-                    this->appendToLog("Draw\n");
+                    emit this->appendToLog("Draw\n");
                     break;
                 default:
                     break;

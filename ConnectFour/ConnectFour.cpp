@@ -1,6 +1,7 @@
 #include "ConnectFour.hpp"
 #include "gsl_assert.h"
 #include <algorithm>
+#include <sstream>
 
 #ifdef _MSC_VER
 #  include <intrin.h>
@@ -299,6 +300,7 @@ GameResult tlCF::Game::PlayGame() {
     unsigned int playerIndex = 0;
     unsigned int moveIndex = 0;
     while (board_.Test() == VictoryStatus::Continue) {
+        auto now = std::chrono::high_resolution_clock::now();
         auto future_move = players_[playerIndex]->Play(static_cast<BoardFieldStatus>(playerIndex+1),board_);
         while (future_move.wait_for(std::chrono::seconds(1)) != std::future_status::ready) {
             if (terminate_) return GameResult();
@@ -309,11 +311,20 @@ GameResult tlCF::Game::PlayGame() {
         if (!board_.CanThrowIn(move)) break; //break off due to illegal move
         else (board_.ThrowIn(move, static_cast<BoardFieldStatus>(playerIndex + 1)));
 
-        playerIndex = (playerIndex + 1) % 2;
-        moveIndex += 1;
+        
 
         if (observer_) observer_(board_);
-        std::this_thread::sleep_for(std::chrono::microseconds(20));
+        if (logging_)
+        {
+            auto then = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<double> duration = then - now;
+            std::stringstream message;
+            message << "Move: "<<moveIndex<<" Player: "<<playerIndex<<" Duration: "<<duration.count()<<"\n";
+            logging_(message.str());
+        }
+        
+        playerIndex = (playerIndex + 1) % 2;
+        moveIndex += 1;
     }
     playerIndex = (playerIndex + 1) % 2; //adjust index back to the one that moved last
     GameResult result;
@@ -327,6 +338,10 @@ GameResult tlCF::Game::PlayGame() {
 
 void tlCF::Game::RegisterObserver(std::function<void(tlCF::BitBoard)> observer) {
     observer_ = observer;
+}
+
+void tlCF::Game::RegisterLogger(std::function<void(const std::string&)> logging) {
+    logging_ = logging;
 }
 
 std::string tlCF::Game::GetRed() const {

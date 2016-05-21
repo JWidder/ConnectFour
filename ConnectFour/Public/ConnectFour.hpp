@@ -117,6 +117,7 @@ namespace tlCF {
 
         GameResult PlayGame();
         void RegisterObserver(std::function<void(tlCF::BitBoard)> observer);
+        void RegisterLogger(std::function<void(const std::string&)> logging);
 
         std::string GetRed() const;
         std::string GetYellow() const;
@@ -130,6 +131,7 @@ namespace tlCF {
 
 
         std::function<void(tlCF::BitBoard)> observer_;
+        std::function<void(const std::string&)> logging_;
 
         Player* players_[2];
         BitBoard board_;
