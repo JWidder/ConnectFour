@@ -6,6 +6,7 @@
 #include <sstream>
 #include <thread>
 #include <chrono>
+#include <cmath>
 
 tlCF::RandomPlayer::RandomPlayer()
     : engine_(dev_()) {
@@ -13,9 +14,23 @@ tlCF::RandomPlayer::RandomPlayer()
 }
 
 std::future<unsigned char> tlCF::RandomPlayer::Play_Impl(BoardFieldStatus color, const BitBoard & board) {
-    std::uniform_int_distribution<> dist(0, 6);
+    std::vector<unsigned char> eligible_slots;
+    //detect valid slots
+    for (int slot = 0; slot < 7; ++slot) {
+        if (board.CanThrowIn(slot) == true) {
+            eligible_slots.push_back(slot);
+        }
+    }
+    //pick a random slot from the list of eligible_slots
+    //if no eligible_slot, take 0
     std::promise<unsigned char> promise;
-    promise.set_value(dist(engine_));
+    if (eligible_slots.empty()) {
+        promise.set_value(0);
+    }
+    else {
+        std::uniform_int_distribution<> dist(0, static_cast<int>(eligible_slots.size() - 1));
+        promise.set_value(eligible_slots[dist(engine_)]);
+    }
     return promise.get_future();
 }
 
@@ -43,7 +58,7 @@ struct MCResult {
 std::future<unsigned char> tlCF::MonteCarlo_SingleThreaded::Play_Impl(BoardFieldStatus color, const BitBoard & board) {
     if (thread_ && thread_->joinable()) {
         thread_->join();
-    }    
+    }
     result_ = std::promise<unsigned char>();
     auto retval = result_.get_future();
     thread_ = std::make_unique<std::thread>([=, &result = result_]() {
@@ -52,18 +67,25 @@ std::future<unsigned char> tlCF::MonteCarlo_SingleThreaded::Play_Impl(BoardField
         const int batch_size = 1000;
         const int draw_score = 1;
         const int victory_score = 2;
-        
+
         std::uniform_int_distribution<> dist(0, 6);
         //get "now"
         auto now = std::chrono::high_resolution_clock::now();
 
+        std::vector<unsigned char> eligible_slots;
+        //detect valid slots
+        for (int slot = 0; slot < 7; ++slot) {
+            if (startposition.CanThrowIn(slot) == true) {
+                eligible_slots.push_back(slot);
+            }
+        }
+        if (eligible_slots.empty()) {
+            result.set_value(0); //take any slot as no slot is valid
+            return;
+        }
         while (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - now).count() < timelimit_in_ms_) {
-            //start a cycle
-            for (int slot = 0; slot < 7; ++slot) {
-                if (startposition.CanThrowIn(slot) != true) {
-                    data[slot].count += batch_size;
-                    continue;
-                }
+            //start a cycle, simulating only valid slots
+            for (auto slot : eligible_slots) {
                 for (int i = 0; i < batch_size; ++i) {
                     auto simulation_board = startposition;
                     auto stone = color;
@@ -94,7 +116,7 @@ std::future<unsigned char> tlCF::MonteCarlo_SingleThreaded::Play_Impl(BoardField
         //find index with max count
         uint32_t max = data[0].score;
         unsigned char index = 0;
-        for (int i = 1; i < 7; ++i) {
+        for (auto i : eligible_slots) {
             if (max < data[i].score) {
                 max = data[i].score;
                 index = i;
@@ -118,13 +140,11 @@ std::string tlCF::MonteCarlo_SingleThreaded::GetInitialState_Impl() const {
     return state.str();
 }
 
-std::future<unsigned char> tlCF::MCST_UB1::Play_Impl(BoardFieldStatus color, const BitBoard & board)
-{
+std::future<unsigned char> tlCF::MCST_UB1::Play_Impl(BoardFieldStatus color, const BitBoard & board) {
     return std::future<unsigned char>();
 }
 
-std::string tlCF::MCST_UB1::GetName_Impl() const
-{
+std::string tlCF::MCST_UB1::GetName_Impl() const {
     std::stringstream result;
     result << "MCST_UB1_" << timelimit_in_ms_;
     return result.str();

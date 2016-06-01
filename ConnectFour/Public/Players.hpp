@@ -29,8 +29,8 @@ namespace tlCF {
 
       public:
         MonteCarlo_SingleThreaded(unsigned int timelimit = 2000)
-        : timelimit_in_ms_(timelimit)
-        , engine_(dev_()) {
+            : timelimit_in_ms_(timelimit)
+            , engine_(dev_()) {
         }
         ~MonteCarlo_SingleThreaded() {
             if (thread_ && thread_->joinable()) {
@@ -60,19 +60,19 @@ namespace tlCF {
     class MCST_UB1 : public Player {
         const unsigned int MinPlayoutsBeforeExpansion = 4;
         const double ExplorationConstant = std::sqrt(2);
-        static const size_t TreeSize = 4 * 1024 * 1024 * 1024;
-    public:
+        static const size_t TreeSize = 4ull * 1024 * 1024 * 1024;
+      public:
         MCST_UB1(unsigned int timelimit = 2000)
             : timelimit_in_ms_(timelimit)
             , engine_(dev_())
-            , memory_pool_(sizeof(detail::MonteCarloTreeNode)+16, TreeSize){
+            , memory_pool_(sizeof(detail::MonteCarloTreeNode)+16, TreeSize) {
         }
         ~MCST_UB1() {
             if (thread_ && thread_->joinable()) {
                 thread_->join();
             }
         }
-    private:
+      private:
         // Inherited via Player
         virtual std::future<unsigned char> Play_Impl(BoardFieldStatus color, const BitBoard & board) override final;
         virtual std::string GetName_Impl() const override final;
@@ -81,7 +81,7 @@ namespace tlCF {
         //functions
         bool Playout(tlCF::BitBoard board) const; //single playout. Returns true for a win.
 
-    private:
+      private:
         //member
         unsigned int timelimit_in_ms_;
         std::random_device dev_;
