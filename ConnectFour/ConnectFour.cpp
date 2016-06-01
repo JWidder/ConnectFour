@@ -313,12 +313,7 @@ GameResult tlCF::Game::PlayGame() {
     unsigned int moveIndex = 0;
     std::string initialYellow = players_[0]->GetInitialState();
     std::string initialRed = players_[1]->GetInitialState();
-    if (logging_) {
-        std::stringstream log;
-        log<<"Initial State Yellow("<<players_[0]->GetName()<<"): "<<initialYellow<<"\n";
-        log<<"Initial State Red("<<players_[1]->GetName()<<"): "<<initialRed<<"\n";
-        logging_(log.str());
-    }
+    
     while (board_.Test() == VictoryStatus::Continue) {
         auto now = std::chrono::high_resolution_clock::now();
         auto future_move = players_[playerIndex]->Play(static_cast<BoardFieldStatus>(playerIndex+1),board_);

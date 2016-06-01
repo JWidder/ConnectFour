@@ -8,6 +8,7 @@ else()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 endif()
 
+add_subdirectory(memory)
 add_subdirectory(ConnectFour)
 add_subdirectory(ConnectFourTest)
 add_subdirectory(ConnectFourApp)

@@ -16,8 +16,8 @@
 MainWindow::MainWindow() {
     terminating_ = false;
     players_.push_back(std::make_shared<tlCF::RandomPlayer>());
-    players_.push_back(std::make_shared<tlCF::MonteCarlo_ST>(2000));
-    players_.push_back(std::make_shared<tlCF::MonteCarlo_ST>(500));
+    players_.push_back(std::make_shared<tlCF::MonteCarlo_SingleThreaded>(2000));
+    players_.push_back(std::make_shared<tlCF::MonteCarlo_SingleThreaded>(500));
 
     QWidget* ui_area = new QWidget(this);
     setCentralWidget(ui_area);

@@ -40,7 +40,7 @@ struct MCResult {
 //r3, y3, r4, y2, r6, y5, r5, y3, r3, y5, r5, y4, r4 -> red wins
 //and this sequence is reproducible!
 
-std::future<unsigned char> tlCF::MonteCarlo_ST::Play_Impl(BoardFieldStatus color, const BitBoard & board) {
+std::future<unsigned char> tlCF::MonteCarlo_SingleThreaded::Play_Impl(BoardFieldStatus color, const BitBoard & board) {
     if (thread_ && thread_->joinable()) {
         thread_->join();
     }    
@@ -105,16 +105,34 @@ std::future<unsigned char> tlCF::MonteCarlo_ST::Play_Impl(BoardFieldStatus color
     return retval;
 }
 
-std::string tlCF::MonteCarlo_ST::GetName_Impl() const {
+std::string tlCF::MonteCarlo_SingleThreaded::GetName_Impl() const {
     std::stringstream result;
-    result << "MonteCarlo_ST_" << timelimit_in_ms_;
+    result << "MonteCarlo_SingleThreaded_" << timelimit_in_ms_;
     return result.str();
 }
 
-std::string tlCF::MonteCarlo_ST::GetInitialState_Impl() const {
+std::string tlCF::MonteCarlo_SingleThreaded::GetInitialState_Impl() const {
     std::stringstream state;
     state << timelimit_in_ms_<<",";
     state << engine_;
     return state.str();
 }
 
+std::future<unsigned char> tlCF::MCST_UB1::Play_Impl(BoardFieldStatus color, const BitBoard & board)
+{
+    return std::future<unsigned char>();
+}
+
+std::string tlCF::MCST_UB1::GetName_Impl() const
+{
+    std::stringstream result;
+    result << "MCST_UB1_" << timelimit_in_ms_;
+    return result.str();
+}
+
+std::string tlCF::MCST_UB1::GetInitialState_Impl() const {
+    std::stringstream state;
+    state << timelimit_in_ms_ << ",";
+    state << engine_;
+    return state.str();
+}
