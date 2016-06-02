@@ -25,11 +25,14 @@ namespace tlCF {
         std::mt19937 engine_;
     };
 
+    enum class MonteCarlo_SingleThreadedStrategy { Time, SimulationCount };
+
     class MonteCarlo_SingleThreaded final : public Player {
 
       public:
-        MonteCarlo_SingleThreaded(unsigned int timelimit = 2000)
-            : timelimit_in_ms_(timelimit)
+        MonteCarlo_SingleThreaded(unsigned int play_strength = 2000, MonteCarlo_SingleThreadedStrategy strategy = MonteCarlo_SingleThreadedStrategy::Time)
+            : strategy_(strategy)
+            , play_strength_(play_strength)
             , engine_(dev_()) {
         }
         ~MonteCarlo_SingleThreaded() {
@@ -44,7 +47,8 @@ namespace tlCF {
         virtual std::string GetInitialState_Impl() const override final;
 
         //member
-        unsigned int timelimit_in_ms_;
+        MonteCarlo_SingleThreadedStrategy strategy_;
+        unsigned int play_strength_; //time in ms for time strategy, simulation count for each collumn for simulation count strategy
         std::random_device dev_;
         std::mt19937 engine_;
         std::promise<unsigned char> result_;

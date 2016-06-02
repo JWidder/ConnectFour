@@ -18,6 +18,7 @@ MainWindow::MainWindow() {
     players_.push_back(std::make_shared<tlCF::RandomPlayer>());
     players_.push_back(std::make_shared<tlCF::MonteCarlo_SingleThreaded>(2000));
     players_.push_back(std::make_shared<tlCF::MonteCarlo_SingleThreaded>(500));
+    players_.push_back(std::make_shared<tlCF::MonteCarlo_SingleThreaded>(8000, tlCF::MonteCarlo_SingleThreadedStrategy::SimulationCount));
 
     QWidget* ui_area = new QWidget(this);
     setCentralWidget(ui_area);
@@ -86,13 +87,12 @@ MainWindow::MainWindow() {
         auto yellowIndex = comboYellow_->currentIndex();
         auto redIndex = comboRed_->currentIndex();
 
-            
+
         auto red = players_[redIndex];
         auto yellow = players_[yellowIndex];
 
         this->terminating_ = true;
-        if (game_)
-        {
+        if (game_) {
             game_->terminate();
         }
         if (gameThread_ && gameThread_->joinable()) {
