@@ -1,5 +1,5 @@
-set(SOURCES main.cpp )
-set(HEADERS )
+set(SOURCES main.cpp outputResult.cpp collectResult.cpp)
+set(HEADERS outputResult.hpp collectResult.hpp)
 
-add_executable(ConnectFourReferenz ${SOURCES} ${HEADERS})
-target_link_libraries(ConnectFourReferenz ConnectFour)
+add_executable(ConnectFourCL ${SOURCES} ${HEADERS})
+target_link_libraries(ConnectFourCL ConnectFour)
