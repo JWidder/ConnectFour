@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 
-
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -15,8 +14,9 @@
 using namespace std;
 
 	int main() {
-		int winnerRed = 0;
-		int winnerYellow = 0;
+		int resultRed = 0;
+		int resultYellow = 0;
+		int resultDraw = 0;
 		patternOutput patternOutput("c:\\temp\\ausgabe.csv");
 		int Zeile = 0;
 		ifstream infile("C://temp//daten.csv"); // for example
@@ -34,13 +34,17 @@ using namespace std;
 			switch (stoi(winner))
 			{
 			case 1: 
-				winnerYellow++;
+				resultYellow++;
 				break;
 			case 2:
-				winnerRed++;
+				resultRed++;
+				break;
+			case 3:
+				resultDraw++;
 				break;
 			}
 
+			// Analyse result data
 			int eingabe[42];
 			string word = "";
 			int iCount = 0;
@@ -70,7 +74,7 @@ using namespace std;
 
 			cout << "Ziele : " << Zeile++ << endl;
 		}
-		cout << "yellow: " << winnerYellow << " red = " << winnerRed << endl;
+		cout << "yellow: " << resultYellow << " red = " << resultRed << " draw = " << resultDraw << endl;
 		int test;
 		cin >> test;
 		patternOutput.titelAusgabe();
