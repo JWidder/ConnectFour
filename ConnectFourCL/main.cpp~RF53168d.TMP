@@ -1,0 +1,77 @@
+// ConnectFourANN.cpp : Definiert den Einstiegspunkt für die Konsolenanwendung.
+//
+
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <fstream>
+
+#include "ConnectFour.hpp"
+#include "Players.hpp"
+#include "NeuralPlayer.hpp"
+#include "referencePlayer.hpp"
+
+using namespace std;
+
+int main() {
+
+	const int gesasmt = 10 * 10 * 1000 * 2;
+	int counter = 0;
+
+	for (int xCount = 100; xCount <= 1000; xCount += 100)
+	{
+		for (int yCount = 100; yCount <= 1000; yCount += 100)
+		{
+			auto yellowPlayer = std::make_shared<tlCF::referencePlayer>(xCount);
+			auto redPlayer = std::make_shared<tlCF::referencePlayer>(yCount);
+
+			int countYellow = 0;
+			int countRed = 0;
+
+
+			auto game_ = std::make_unique<tlCF::Game>(yellowPlayer.get(), redPlayer.get());
+			for (int i = 0; i < 1000; i++)
+			{
+				counter++;
+				auto result = game_->PlayGame();
+
+				switch ((int)result.result)
+				{
+				case 1:
+					countYellow++;
+					break;
+				case 2:
+					countRed++;
+					break;
+				}
+				game_->Reset(false);
+				// ToDo wie rufe ich den Destruktor auf?
+			}
+			cout << "Nr: " << counter << " von " << gesasmt << " yellow:" << countYellow << " red :" << countRed << " xCount: " << xCount << " yCount: " << yCount << endl;
+			countYellow = 0;
+			countRed = 0;
+			game_->Reset(true);
+			// game_ = std::make_unique<tlCF::Game>(redPlayer.get(), yellowPlayer.get());
+			for (int i = 0; i < 1000; i++)
+			{
+				counter++;
+				auto result = game_->PlayGame();
+
+				switch ((int)result.result)
+				{
+				case 1:
+					countYellow++;
+					break;
+				case 2:
+					countRed++;
+					break;
+				}
+				game_->Reset(false);
+			}
+			cout << "Nr: " << counter << " von " << gesasmt << " yellow:" << countYellow << " red :" << countRed << " xCount: " << xCount << " yCount: " << yCount << endl;
+		}
+	}
+	int test;
+	cin >> test;
+	return 0;
+};
