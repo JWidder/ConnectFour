@@ -12,15 +12,26 @@
 #include "Players.hpp"
 #include "NeuralPlayer.hpp"
 
+#include "IniFile.h"
+
 using namespace std;
 
 int main() 
 {
+	CIniFile _iniFile = CIniFile();
+
+	std::vector<string>iniDaten = std::vector<string>();
+	iniDaten = _iniFile.GetSectionNames("c:\\temp\\test.ini");
+	auto sectionDaten = _iniFile.GetSection((string)"Player","c:\\temp\\test.ini");
+	auto recordRed = _iniFile.GetRecord("RedPlayer", "Player", "c:\\temp\\test.ini");
+	auto recordYellow = _iniFile.GetRecord("YellowPlayer", "Player", "c:\\temp\\test.ini");
+	auto anzahl = _iniFile.GetRecord("Number", "Simulation", "c:\\temp\\test.ini");
+	int anzWerte = stoi(anzahl[0].Value);
+
 	outputResult _outputResult=outputResult();
 	collectResult _collectResult = collectResult();
 
 	auto yellowPlayer = std::make_shared<tlCF::MonteCarlo_SingleThreaded>(8000, tlCF::MonteCarlo_SingleThreadedStrategy::SimulationCount);
-	// auto redPlayer = std::make_shared<tlCF::MonteCarlo_SingleThreaded>(8000, tlCF::MonteCarlo_SingleThreadedStrategy::SimulationCount);
 	auto redPlayer = std::make_shared<tlCF::NeuralPlayer>();
 
 	int counter = 0;
