@@ -1,22 +1,20 @@
 #include "outputResult.hpp"
+#include <string>
 
-
-
-outputResult::outputResult()
+outputResult::outputResult(std::string *name)
 {
-std::fstream filestream("c:\\temp\\daten.csv", std::ios::out | std::ios::trunc);
+_fileName=*name;
+std::fstream filestream(_fileName, std::ios::out | std::ios::trunc);
 filestream.close();
 }
-
 
 outputResult::~outputResult()
 {
 }
 
-
 void outputResult::writeResult(int iCount,tlCF::GameResult result)
 {
-	std::fstream filestream("c:\\temp\\daten.csv", std::ios::app);
+	std::fstream filestream(_fileName, std::ios::app);
 	filestream << iCount << " ; " << (int)result.result << " ; ";
 	for (int iCount = 0; iCount < 42; iCount++)
 	{

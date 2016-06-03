@@ -16,20 +16,25 @@
 
 using namespace std;
 
-int main() 
+int main(int argc, char *argv[]) 
 {
 	CIniFile _iniFile = CIniFile();
 
 	std::vector<string>iniDaten = std::vector<string>();
-	iniDaten = _iniFile.GetSectionNames("c:\\temp\\test.ini");
-	auto sectionDaten = _iniFile.GetSection((string)"Player","c:\\temp\\test.ini");
-	auto recordRed = _iniFile.GetRecord("RedPlayer", "Player", "c:\\temp\\test.ini");
-	auto recordYellow = _iniFile.GetRecord("YellowPlayer", "Player", "c:\\temp\\test.ini");
-	auto anzahl = _iniFile.GetRecord("Number", "Simulation", "c:\\temp\\test.ini");
+	iniDaten = _iniFile.GetSectionNames(argv[1]);
+	auto sectionDaten = _iniFile.GetSection((string)"Player", argv[1]);
+	auto recordRed = _iniFile.GetRecord("RedPlayer", "Player", argv[1]);
+	auto recordYellow = _iniFile.GetRecord("YellowPlayer", "Player", argv[1]);
+	auto anzahl = _iniFile.GetRecord("Number", "Simulation", argv[1]);
 	int anzWerte = stoi(anzahl[0].Value);
+	
+	auto wert = _iniFile.GetRecord("SimulationOutput", "Files", argv[1]);
+	std::string name= wert[0].Value.c_str();
+	outputResult _outputResult = outputResult(&name);
 
-	outputResult _outputResult=outputResult();
-	collectResult _collectResult = collectResult();
+	wert = _iniFile.GetRecord("SimulationOverview", "Files", argv[1]);
+	const char *name1 = wert[0].Value.c_str();
+	collectResult _collectResult = collectResult(name1);
 
 	auto yellowPlayer = std::make_shared<tlCF::MonteCarlo_SingleThreaded>(8000, tlCF::MonteCarlo_SingleThreadedStrategy::SimulationCount);
 	auto redPlayer = std::make_shared<tlCF::NeuralPlayer>();
@@ -37,10 +42,9 @@ int main()
 	int counter = 0;
 	int countYellow = 0;
 	int countRed = 0;
-	int gesamt=100;
 
 	auto game_ = std::make_unique<tlCF::Game>(yellowPlayer.get(), redPlayer.get());
-	for (int i = 0; i < gesamt; i++)
+	for (int i = 0; i < anzWerte; i++)
 	{
 		counter++;
 				auto result = game_->PlayGame();
@@ -58,12 +62,12 @@ int main()
 				}
 				game_->Reset(false);
 				// ToDo wie rufe ich den Destruktor auf?
-				cout << "Nr: " << i << " von " << gesamt << " yellow:" << countYellow << " red :" << countRed << endl;
+				cout << "Nr: " << i << " von " << anzWerte<< " yellow:" << countYellow << " red :" << countRed << endl;
 			}
 			countYellow = 0;
 			countRed = 0;
 			game_->Reset(true);
-			for (int i = 0; i < gesamt; i++)
+			for (int i = 0; i < anzWerte; i++)
 			{
 				counter++;
 				auto result = game_->PlayGame();
@@ -81,7 +85,7 @@ int main()
 				}
 				game_->Reset(false);
 				// ToDo wie rufe ich den Destruktor auf?
-				cout << "Nr: " << i << " von " << gesamt << " yellow:" << countYellow << " red :" << countRed << endl;
+				cout << "Nr: " << i << " von " << anzWerte << " yellow:" << countYellow << " red :" << countRed << endl;
 			}
 			_collectResult.outputResult();
 	int test;

@@ -1,13 +1,16 @@
+#include <string.h>
 #include "collectResult.hpp"
 
 
 
-collectResult::collectResult()
+
+collectResult::collectResult(std::string name)
 {
+	_fileName = name;
 	_countDraw = 0;
 	_countRed = 0;
 	_countYellow = 0;
-	std::fstream filestream("c:\\temp\\result.csv", std::ios::out | std::ios::trunc);
+	std::fstream filestream(_fileName, std::ios::out | std::ios::trunc);
 	filestream.close();
 }
 
@@ -34,7 +37,7 @@ void collectResult::sampleResult(tlCF::GameResult result)
 
 void collectResult::outputResult()
 {
-	std::fstream filestream("c:\\temp\\result.csv", std::ios::app);
+	std::fstream filestream(_fileName, std::ios::app);
 	filestream << "Ergebnisse" << std::endl;
 	filestream << "Winner Yellow: " << _countYellow << std::endl;
 	filestream << "Winner Red:    " << _countRed << std::endl;
