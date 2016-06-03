@@ -10,6 +10,7 @@
 #include "collectResult.hpp"
 #include "ConnectFour.hpp"
 #include "Players.hpp"
+#include "NeuralPlayer.hpp"
 
 using namespace std;
 
@@ -19,7 +20,8 @@ int main()
 	collectResult _collectResult = collectResult();
 
 	auto yellowPlayer = std::make_shared<tlCF::MonteCarlo_SingleThreaded>(8000, tlCF::MonteCarlo_SingleThreadedStrategy::SimulationCount);
-	auto redPlayer = std::make_shared<tlCF::MonteCarlo_SingleThreaded>(8000, tlCF::MonteCarlo_SingleThreadedStrategy::SimulationCount);
+	// auto redPlayer = std::make_shared<tlCF::MonteCarlo_SingleThreaded>(8000, tlCF::MonteCarlo_SingleThreadedStrategy::SimulationCount);
+	auto redPlayer = std::make_shared<tlCF::NeuralPlayer>();
 
 	int counter = 0;
 	int countYellow = 0;

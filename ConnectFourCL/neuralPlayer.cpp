@@ -1,4 +1,6 @@
+
 #include "NeuralPlayer.hpp"
+
 
 #include "gsl_assert.h"
 #include "ConnectFour.hpp"
