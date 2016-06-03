@@ -55,7 +55,8 @@ using namespace std;
 					int position = stoi(word);
 					if (position < 255)
 					{
-						tempBrett.addButton(position, spieler++);
+						tempBrett.addButton(position, spieler);
+						spieler++;
 						spieler = spieler % 2;
 						eingabe[iCount] = stoi(word);
 					}
@@ -67,16 +68,11 @@ using namespace std;
 					iCount++;
 				}
 			}
-			for (int iCount = 0; iCount < tempBrett.getCountSnapshots(); iCount++)
-			{
-				patternOutput.outTrainingString(&tempBrett.getInput(iCount),&tempBrett.getOutput(iCount));
-			}
+			tempBrett.outputTrainingString(&patternOutput);
 
 			cout << "Ziele : " << Zeile++ << endl;
 		}
 		cout << "yellow: " << resultYellow << " red = " << resultRed << " draw = " << resultDraw << endl;
-		int test;
-		cin >> test;
 		patternOutput.titelAusgabe();
 		patternOutput.commentAusgabe();
 		return 0;

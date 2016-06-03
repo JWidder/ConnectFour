@@ -59,9 +59,9 @@ namespace std
 
 	void brett::outputTrainingString(patternOutput *_patternOutput)
 	{
-		for (list<snapshot>::iterator zeiger = werte.begin(); zeiger != werte.end(); ++zeiger)
+		for (list<snapshot>::iterator zeiger = werte.begin(); zeiger != werte.end(); zeiger++)
 		{
-			_patternOutput->outTrainingString((*zeiger).getBoardData(), (*zeiger).getModulData());
+			_patternOutput->outTrainingString(*zeiger->getBoardData(), *zeiger->getBoardOutput());
 		}
 	}
 }

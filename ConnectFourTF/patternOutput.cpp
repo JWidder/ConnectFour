@@ -65,8 +65,6 @@ void patternOutput::outTrainingString(vector<int>* input, vector<int> *output)
 
 	titel.push_back("test");
 	comment.push_back("comment");
-
-	return;
 }
 
 void patternOutput::titelAusgabe()

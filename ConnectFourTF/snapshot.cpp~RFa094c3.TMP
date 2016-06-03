@@ -56,10 +56,10 @@ void std::snapshot::setStatus(int inStatus)
 
 vector<int> *std::snapshot::getBoardData()
 {
-	return &snapshotBoard;
+	return snapshotBoard;
 }
 
-vector<int> *std::snapshot::getModulData()
+vector<int> std::snapshot::getModulData()
 {
-	return &snapshotOutput;
+	return snapshotOutput;
 }

@@ -1,6 +1,5 @@
 #pragma once
 #include "snapshot.hpp"
-#include "patternOutput.hpp"
 #include <list>
 #include <cstring>
 
@@ -25,6 +24,5 @@ namespace std
 		int getCountSnapshots();
 		vector<int>getInput(int pos);
 		vector<int>getOutput(int pos);
-		void outputTrainingString(patternOutput * _patternOutput);
 	};
 }

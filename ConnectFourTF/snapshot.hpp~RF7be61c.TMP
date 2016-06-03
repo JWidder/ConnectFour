@@ -20,7 +20,5 @@ namespace std
 		vector<int>getBoardInput();
 		void setModule(int button);
 		void setStatus(int inStatus);
-		vector<int> *getBoardData();
-		vector<int> *getModulData();
 	};
 }
