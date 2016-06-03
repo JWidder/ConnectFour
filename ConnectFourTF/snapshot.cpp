@@ -54,6 +54,16 @@ void std::snapshot::setStatus(int inStatus)
 	status = inStatus;
 }
 
+void std::snapshot::setPlayer(int player)
+{
+	_player = player;
+}
+
+int std::snapshot::getPlayer()
+{
+	return _player;
+}
+
 vector<int> *std::snapshot::getBoardData()
 {
 	return &snapshotBoard;

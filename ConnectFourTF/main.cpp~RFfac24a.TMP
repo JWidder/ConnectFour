@@ -17,8 +17,7 @@ using namespace std;
 		int resultRed = 0;
 		int resultYellow = 0;
 		int resultDraw = 0;
-		patternOutput patternOutputYellow("c:\\temp\\trainingDataYellow.csv");
-		patternOutput patternOutputRed("c:\\temp\\trainingDataRed.csv");
+		patternOutput patternOutput("c:\\temp\\ausgabe.csv");
 		int Zeile = 0;
 		ifstream infile("C://temp//daten.csv"); // for example
 		string line = "";
@@ -32,7 +31,6 @@ using namespace std;
 
 			string winner = "";
 			getline(strstr, winner, ';');
-			tempBrett.setWinner(stoi(winner));
 			switch (stoi(winner))
 			{
 			case 1: 
@@ -70,15 +68,12 @@ using namespace std;
 					iCount++;
 				}
 			}
-			tempBrett.outputTrainingString(&patternOutputYellow, 1);
-			tempBrett.outputTrainingString(&patternOutputRed, 2);
+			tempBrett.outputTrainingString(&patternOutput);
 
 			cout << "Ziele : " << Zeile++ << endl;
 		}
 		cout << "yellow: " << resultYellow << " red = " << resultRed << " draw = " << resultDraw << endl;
-		patternOutputRed.titelAusgabe();
-		patternOutputYellow.titelAusgabe();
-		patternOutputRed.commentAusgabe();
-		patternOutputYellow.commentAusgabe();
+		patternOutput.titelAusgabe();
+		patternOutput.commentAusgabe();
 		return 0;
 };

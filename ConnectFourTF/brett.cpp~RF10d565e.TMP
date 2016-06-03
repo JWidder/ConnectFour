@@ -24,8 +24,7 @@ namespace std
 		werte.push_back(*pointSnapshot);
 		pointSnapshot = &werte.back();
 		pointSnapshot->addButton(spalte, wert);
-		_player = (_player + 1) % 2;
-		pointSnapshot->setPlayer(_player+1);
+		pointSnapshot->setPlayer(_player);
 	}
 
 	void brett::addButton(int status)

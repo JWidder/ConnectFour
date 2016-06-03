@@ -13,8 +13,7 @@ namespace std
 		// int drawModul;
 		int xLen;
 		int yLen;
-		int _winner;
-		int _player;
+		int winner;
 		list<snapshot> werte;
 		snapshot *pointSnapshot;
 

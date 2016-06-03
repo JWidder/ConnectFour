@@ -10,6 +10,7 @@ namespace std
 		int yLen;
 		int modul;
 		int status;
+		int _player;
 		vector<int> snapshotBoard;
 		vector<int> snapshotOutput;
 	public:
@@ -20,6 +21,8 @@ namespace std
 		vector<int>getBoardInput();
 		void setModule(int button);
 		void setStatus(int inStatus);
+		void setPlayer(int player);
+		int getPlayer();
 		vector<int> *getBoardData();
 		vector<int> *getModulData();
 	};

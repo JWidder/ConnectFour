@@ -8,7 +8,6 @@ namespace std
 	{
 		xLen = inXLen;
 		yLen = inYLen;
-		_player = 0;
 		werte = list<snapshot>();
 		werte.push_back(snapshot(xLen, yLen));
 	}
@@ -24,8 +23,6 @@ namespace std
 		werte.push_back(*pointSnapshot);
 		pointSnapshot = &werte.back();
 		pointSnapshot->addButton(spalte, wert);
-		_player = (_player + 1) % 2;
-		pointSnapshot->setPlayer(_player+1);
 	}
 
 	void brett::addButton(int status)
@@ -33,12 +30,6 @@ namespace std
 		pointSnapshot = &werte.back();
 		pointSnapshot->setStatus(status);
 	}
-
-	void brett::setWinner(int winner)
-	{
-		_winner = winner;
-	}
-
 
 
 	int brett::getCountSnapshots()
@@ -66,18 +57,11 @@ namespace std
 		return zeiger->getBoardOutput();
 	}
 
-	void brett::outputTrainingString(patternOutput *_patternOutput,int player)
+	void brett::outputTrainingString(patternOutput *_patternOutput)
 	{
-		if (_winner == player)
-		{
 		for (list<snapshot>::iterator zeiger = werte.begin(); zeiger != werte.end(); ++zeiger)
 		{
-			if ((*zeiger).getPlayer() == player)
-			{
-				_patternOutput->outTrainingString((*zeiger).getBoardData(), (*zeiger).getModulData());
-			}
-		}
-
+			_patternOutput->outTrainingString((*zeiger).getBoardData(), (*zeiger).getModulData());
 		}
 	}
 }
