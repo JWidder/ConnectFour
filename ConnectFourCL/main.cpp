@@ -5,6 +5,7 @@
 #include <sstream>
 #include <string>
 #include <fstream>
+#include <map>
 
 #include "outputResult.hpp"
 #include "collectResult.hpp"
@@ -36,11 +37,35 @@ int main(int argc, char *argv[])
 	const char *name1 = wert[0].Value.c_str();
 	collectResult _collectResult = collectResult(name1);
 
-	auto yellowPlayer = std::make_shared<tlCF::MonteCarlo_SingleThreaded>(8000, tlCF::MonteCarlo_SingleThreadedStrategy::SimulationCount);
-	auto redPlayer = std::make_shared<tlCF::MonteCarlo_SingleThreaded>(8000, tlCF::MonteCarlo_SingleThreadedStrategy::SimulationCount);
+	auto PlayerRandom = std::make_shared<tlCF::RandomPlayer>();
+	auto PlayerMonteCarloNumber = std::make_shared<tlCF::MonteCarlo_SingleThreaded>(8000, tlCF::MonteCarlo_SingleThreadedStrategy::SimulationCount);
+	auto PlayerMonteCarloTime500 = std::make_shared<tlCF::MonteCarlo_SingleThreaded>(500);
+	auto PlayerMonteCarloTime2000 = std::make_shared<tlCF::MonteCarlo_SingleThreaded>(2000);
+	auto PlayerNeural=std::make_shared<tlCF::NeuralPlayer>();
+
+	std::hash<string> stringHash;
+	wert = _iniFile.GetRecord("PlayerRed", "Simulation", argv[1]);
+	string playerRed = wert[0].Value.c_str();
+	int wertTest = stringHash(playerRed);
+	wert = _iniFile.GetRecord("PlayerYellow", "Simulation", argv[1]);
+	string playerYellow = wert[0].Value.c_str();
+	wertTest = stringHash(playerYellow);
+
+	std::map<string, std::shared_ptr<tlCF::Player>> mapPlayer;
+
+	mapPlayer["MonteCaloTime500"] = std::make_shared<tlCF::MonteCarlo_SingleThreaded>(500);
+	mapPlayer["MonteCaloTime2000"] = std::make_shared<tlCF::MonteCarlo_SingleThreaded>(2000);
+	mapPlayer["MonteCaloNumber8000"] = std::make_shared<tlCF::MonteCarlo_SingleThreaded>(8000, tlCF::MonteCarlo_SingleThreadedStrategy::SimulationCount);
+	mapPlayer["Random"] = std::make_shared<tlCF::RandomPlayer>();
+	mapPlayer["Neural"] = std::make_shared<tlCF::NeuralPlayer>();
+
+	// auto yellowPlayer = std::make_shared<tlCF::RandomPlayer>();
+		// auto yellowPlayer = std::make_shared<tlCF::MonteCarlo_SingleThreaded>(8000, tlCF::MonteCarlo_SingleThreadedStrategy::SimulationCount);
+		// auto redPlayer = std::make_shared<tlCF::MonteCarlo_SingleThreaded>(8000, tlCF::MonteCarlo_SingleThreadedStrategy::SimulationCount);
 	// auto redPlayer = std::make_shared<tlCF::NeuralPlayer>();
 
-
+	auto redPlayer = mapPlayer["MonteCaloTime500"];
+	auto yellowPlayer = mapPlayer["MonteCaloTime500"];
 
 	int counter = 0;
 	int countYellow = 0;
@@ -89,7 +114,7 @@ int main(int argc, char *argv[])
 				cout << "Nr: " << i << " von " << anzWerte << " yellow:" << countYellow << " red :" << countRed << endl;
 			}
 			_collectResult.outputResult();
-	cout << "Enter a value : "
+			cout << "Enter a value : ";
 	int test;
 	cin >> test;
 	return 0;
