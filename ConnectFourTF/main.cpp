@@ -7,9 +7,11 @@
 #include <sstream>
 #include <string>
 #include <fstream>
+#include <map>
 
 #include "patternOutput.hpp"
 #include "brett.hpp"
+#include "ConnectFour.hpp"
 
 #include "IniFile.h"
 
@@ -19,21 +21,14 @@ using namespace std;
 		CIniFile _iniFile = CIniFile();
 
 		auto wert = _iniFile.GetRecord("TrainingDataYellow", "Training", argv[1]);
-		std::string name = wert[0].Value.c_str();
 		patternOutput patternOutputYellow(&wert[0].Value);
 
 		wert = _iniFile.GetRecord("TrainingDataRed", "Training", argv[1]);
-		name = wert[0].Value;
 		patternOutput patternOutputRed(&wert[0].Value);
 
-		wert = _iniFile.GetRecord("SimulationOutput", "Files", argv[1]);
-		name = wert[0].Value;
+		wert = _iniFile.GetRecord("SimulationOutput", "Simulation_01", argv[1]);
 		ifstream infile(wert[0].Value);
 
-
-		int resultRed = 0;
-		int resultYellow = 0;
-		int resultDraw = 0;
 		int Zeile = 0;
 
 		string line = "";
@@ -48,18 +43,6 @@ using namespace std;
 			string winner = "";
 			getline(strstr, winner, ';');
 			tempBrett.setWinner(stoi(winner));
-			switch (stoi(winner))
-			{
-			case 1: 
-				resultYellow++;
-				break;
-			case 2:
-				resultRed++;
-				break;
-			case 3:
-				resultDraw++;
-				break;
-			}
 
 			// Analyse result data
 			int eingabe[42];
@@ -90,7 +73,6 @@ using namespace std;
 
 			cout << "Ziele : " << Zeile++ << endl;
 		}
-		cout << "yellow: " << resultYellow << " red = " << resultRed << " draw = " << resultDraw << endl;
 		patternOutputRed.titelAusgabe();
 		patternOutputYellow.titelAusgabe();
 		patternOutputRed.commentAusgabe();

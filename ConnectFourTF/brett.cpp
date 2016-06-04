@@ -39,8 +39,6 @@ namespace std
 		_winner = winner;
 	}
 
-
-
 	int brett::getCountSnapshots()
 	{
 		return werte.size();
