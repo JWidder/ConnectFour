@@ -12,7 +12,6 @@
 #include "patternOutput.hpp"
 #include "brett.hpp"
 #include "ConnectFour.hpp"
-
 #include "IniFile.h"
 
 using namespace std;

@@ -10,20 +10,51 @@
 #include "Players.hpp"
 #include "NeuralPlayer.hpp"
 #include "IniFile.h"
+#include "selectPlayer.hpp"
 
 using namespace std;
+
+std::shared_ptr<tlCF::Player> createPlayer(string name, string parameter)
+{
+	std::shared_ptr <tlCF::Player> tempPlayer;
+	if (name == "MonteCarloTime")
+	{
+		int number = stoi(parameter);
+		tempPlayer = std::make_shared<tlCF::MonteCarlo_SingleThreaded>(number);
+	}
+	else if (name == "MonteCarloNumber")
+	{
+		int number = stoi(parameter);
+		tempPlayer = std::make_shared<tlCF::MonteCarlo_SingleThreaded>(number, tlCF::MonteCarlo_SingleThreadedStrategy::SimulationCount);
+	}
+	else if (name == "Random")
+	{
+		tempPlayer = std::make_shared<tlCF::RandomPlayer>();
+	}
+	else if (name == "Neural")
+	{
+		tempPlayer = std::make_shared<tlCF::NeuralPlayer>();
+	}
+	else
+	{
+		tempPlayer = std::make_shared<tlCF::RandomPlayer>();
+	}
+
+	return tempPlayer;
+}
+
 
 int main(int argc, char *argv[]) 
 {
 	CIniFile _iniFile = CIniFile();
 
-	std::vector<string>iniDaten = std::vector<string>();
-	iniDaten = _iniFile.GetSectionNames(argv[1]);
-	auto anzahl = _iniFile.GetRecord("Number", "Simulation_01", argv[1]);
-	int anzWerte = stoi(anzahl[0].Value);
+//	std::vector<string>iniDaten = std::vector<string>();
+//	iniDaten = _iniFile.GetSectionNames(argv[1]);
+
+	int anzWerte = stoi(_iniFile.GetRecord("Number", "Simulation_01", argv[1])[0].Value);
 	
 	auto wert = _iniFile.GetRecord("SimulationOutput", "Simulation_01", argv[1]);
-	std::string name= wert[0].Value.c_str();
+	std::string name= wert[0].Value;
 	outputResult _outputResult = outputResult(&name);
 
 	wert = _iniFile.GetRecord("SimulationOverview", "Simulation_01", argv[1]);
@@ -34,21 +65,15 @@ int main(int argc, char *argv[])
 	string playerRed = wert[0].Value.c_str();
 	wert = _iniFile.GetRecord("PlayerRedNumber", "Simulation_01", argv[1]);
 	int playerRedNumber = std::stoi(wert[0].Value);
+	string playerRedParameter = wert[0].Value;
 	wert = _iniFile.GetRecord("PlayerYellow", "Simulation_01", argv[1]);
 	string playerYellow = wert[0].Value.c_str();
 	wert = _iniFile.GetRecord("PlayerYellowNumber", "Simulation_01", argv[1]);
 	int playerYellowNumber = std::stoi(wert[0].Value);
+	string playerYellowParameter = wert[0].Value;
 
-	std::map<string, std::shared_ptr<tlCF::Player>> mapPlayer;
-	mapPlayer["MonteCarloTime"] = std::make_shared<tlCF::MonteCarlo_SingleThreaded>(2000);
-	mapPlayer["MonteCarloNumber"] = std::make_shared<tlCF::MonteCarlo_SingleThreaded>(8000, tlCF::MonteCarlo_SingleThreadedStrategy::SimulationCount);
-	mapPlayer["Random"] = std::make_shared<tlCF::RandomPlayer>();
-	mapPlayer["Neural"] = std::make_shared<tlCF::NeuralPlayer>();
-
-	auto redPlayer = mapPlayer[playerRed];
-	auto yellowPlayer = mapPlayer[playerYellow];
-
-	std::map<int, int> distribution;
+	auto redPlayer = createPlayer(playerRed, playerRedParameter);
+	auto yellowPlayer = createPlayer(playerYellow, playerYellowParameter);
 
 	auto game_ = std::make_unique<tlCF::Game>(yellowPlayer.get(), redPlayer.get());
 	for (int loopCount = 0; loopCount < anzWerte; loopCount++)
@@ -57,7 +82,6 @@ int main(int argc, char *argv[])
 		_collectResult.sampleResult(result);
 		_outputResult.writeResult(loopCount,result);
 
-		distribution[(int)result.result]++;
 		game_->Reset(false);
 		cout << _collectResult.outputStatus();
 	}
