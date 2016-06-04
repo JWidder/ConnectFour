@@ -1,0 +1,43 @@
+MemBrain V06.01.03.00
+(Feb 11 2016)
+Sectioned CSV File
+
+[<LESSON START>]
+
+[<INFO HEADER>]
+This file represents a MemBrain Lesson.
+
+[<LESSON NAME>]
+XOR.01
+
+[<LESSON COMMENT>]
+---
+
+[<INPUTS>]
+IN 1;IN 2
+
+[<OUTPUTS>]
+OUT
+
+[<PATTERN FORMAT INFO>]
+IN 1;IN 2;OUT
+
+[<PATTERNS>]
+0;0;0
+0;0;0
+0;1;1
+1;0;1
+
+[<PATTERN NAMES>]
+New Pattern
+New Pattern
+New Pattern
+New Pattern
+
+[<PATTERN COMMENTS>]
+---
+---
+---
+---
+
+[<END>]

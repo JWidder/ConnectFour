@@ -11,16 +11,31 @@
 #include "patternOutput.hpp"
 #include "brett.hpp"
 
+#include "IniFile.h"
+
 using namespace std;
 
-	int main() {
+	int main(int argc, char *argv[]) {
+		CIniFile _iniFile = CIniFile();
+
+		auto wert = _iniFile.GetRecord("TrainingDataYellow", "Training", argv[1]);
+		std::string name = wert[0].Value.c_str();
+		patternOutput patternOutputYellow(&wert[0].Value);
+
+		wert = _iniFile.GetRecord("TrainingDataRed", "Training", argv[1]);
+		name = wert[0].Value;
+		patternOutput patternOutputRed(&wert[0].Value);
+
+		wert = _iniFile.GetRecord("SimulationOutput", "Files", argv[1]);
+		name = wert[0].Value;
+		ifstream infile(wert[0].Value);
+
+
 		int resultRed = 0;
 		int resultYellow = 0;
 		int resultDraw = 0;
-		patternOutput patternOutputYellow("c:\\temp\\trainingDataYellow.csv");
-		patternOutput patternOutputRed("c:\\temp\\trainingDataRed.csv");
 		int Zeile = 0;
-		ifstream infile("C://temp//daten.csv"); // for example
+
 		string line = "";
 		while (getline(infile, line)) {
 			brett tempBrett = brett(7, 6);

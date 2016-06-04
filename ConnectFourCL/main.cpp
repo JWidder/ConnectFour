@@ -37,7 +37,10 @@ int main(int argc, char *argv[])
 	collectResult _collectResult = collectResult(name1);
 
 	auto yellowPlayer = std::make_shared<tlCF::MonteCarlo_SingleThreaded>(8000, tlCF::MonteCarlo_SingleThreadedStrategy::SimulationCount);
-	auto redPlayer = std::make_shared<tlCF::NeuralPlayer>();
+	auto redPlayer = std::make_shared<tlCF::MonteCarlo_SingleThreaded>(8000, tlCF::MonteCarlo_SingleThreadedStrategy::SimulationCount);
+	// auto redPlayer = std::make_shared<tlCF::NeuralPlayer>();
+
+
 
 	int counter = 0;
 	int countYellow = 0;
@@ -47,11 +50,11 @@ int main(int argc, char *argv[])
 	for (int i = 0; i < anzWerte; i++)
 	{
 		counter++;
-				auto result = game_->PlayGame();
-				_collectResult.sampleResult(result);
-				_outputResult.writeResult(counter,result);
+		auto result = game_->PlayGame();
+		_collectResult.sampleResult(result);
+		_outputResult.writeResult(counter,result);
 
-				switch ((int)result.result)
+		switch ((int)result.result)
 				{
 				case 1:
 					countYellow++;
@@ -61,7 +64,6 @@ int main(int argc, char *argv[])
 					break;
 				}
 				game_->Reset(false);
-				// ToDo wie rufe ich den Destruktor auf?
 				cout << "Nr: " << i << " von " << anzWerte<< " yellow:" << countYellow << " red :" << countRed << endl;
 			}
 			countYellow = 0;
@@ -84,10 +86,10 @@ int main(int argc, char *argv[])
 					break;
 				}
 				game_->Reset(false);
-				// ToDo wie rufe ich den Destruktor auf?
 				cout << "Nr: " << i << " von " << anzWerte << " yellow:" << countYellow << " red :" << countRed << endl;
 			}
 			_collectResult.outputResult();
+	cout << "Enter a value : "
 	int test;
 	cin >> test;
 	return 0;

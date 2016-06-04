@@ -16,7 +16,7 @@ using namespace std;
 		list<string> comment;
 
 	public:
-		patternOutput(const char *fileName);
+		patternOutput(std::string *fileName);
 		~patternOutput();
 
 		void outTrainingString(vector<int> *input, vector<int> *output);

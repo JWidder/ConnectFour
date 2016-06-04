@@ -3,11 +3,11 @@
 
 using namespace std;
 
-patternOutput::patternOutput(const char *fileName)
+patternOutput::patternOutput(std::string *fileName)
 {
 	titel = list<string>();
 	comment= list<string>();
-	ziel.open(fileName);
+	ziel.open(*fileName);
 	if (!ziel) {
 		std::cerr << "Datei kann nicht geöffnet werden!\n";
 		exit(-1);
