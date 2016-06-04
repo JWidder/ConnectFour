@@ -4,13 +4,15 @@
 #include <random>
 #include <thread>
 #include <memory>
+#include <string>
 #include "neuralNet.hpp"
 
 namespace tlCF {
 
 	class NeuralPlayer : public Player {
 	public:
-		NeuralPlayer();
+		NeuralPlayer() { ; }
+		NeuralPlayer(std::string netName);
 	private:
 		int position;
 		NeuralNet *neuralNet;

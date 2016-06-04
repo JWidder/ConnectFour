@@ -10,7 +10,6 @@
 #include "Players.hpp"
 #include "NeuralPlayer.hpp"
 #include "IniFile.h"
-#include "selectPlayer.hpp"
 
 using namespace std;
 
@@ -47,30 +46,15 @@ std::shared_ptr<tlCF::Player> createPlayer(string name, string parameter)
 int main(int argc, char *argv[]) 
 {
 	CIniFile _iniFile = CIniFile();
-
-//	std::vector<string>iniDaten = std::vector<string>();
-//	iniDaten = _iniFile.GetSectionNames(argv[1]);
-
 	int anzWerte = stoi(_iniFile.GetRecord("Number", "Simulation_01", argv[1])[0].Value);
 	
-	auto wert = _iniFile.GetRecord("SimulationOutput", "Simulation_01", argv[1]);
-	std::string name= wert[0].Value;
-	outputResult _outputResult = outputResult(&name);
+	outputResult _outputResult = outputResult(&_iniFile.GetRecord("SimulationOutput", "Simulation_01", argv[1])[0].Value);
+	collectResult _collectResult = collectResult(_iniFile.GetRecord("SimulationOverview", "Simulation_01", argv[1])[0].Value);
 
-	wert = _iniFile.GetRecord("SimulationOverview", "Simulation_01", argv[1]);
-	const char *name1 = wert[0].Value.c_str();
-	collectResult _collectResult = collectResult(name1);
-
-	wert = _iniFile.GetRecord("PlayerRed", "Simulation_01", argv[1]);
-	string playerRed = wert[0].Value.c_str();
-	wert = _iniFile.GetRecord("PlayerRedNumber", "Simulation_01", argv[1]);
-	int playerRedNumber = std::stoi(wert[0].Value);
-	string playerRedParameter = wert[0].Value;
-	wert = _iniFile.GetRecord("PlayerYellow", "Simulation_01", argv[1]);
-	string playerYellow = wert[0].Value.c_str();
-	wert = _iniFile.GetRecord("PlayerYellowNumber", "Simulation_01", argv[1]);
-	int playerYellowNumber = std::stoi(wert[0].Value);
-	string playerYellowParameter = wert[0].Value;
+	string playerRed = _iniFile.GetRecord("PlayerRed", "Simulation_01", argv[1])[0].Value;
+	string playerRedParameter = _iniFile.GetRecord("PlayerRedNumber", "Simulation_01", argv[1])[0].Value;
+	string playerYellow = _iniFile.GetRecord("PlayerYellow", "Simulation_01", argv[1])[0].Value;
+	string playerYellowParameter = _iniFile.GetRecord("PlayerYellowNumber", "Simulation_01", argv[1])[0].Value;
 
 	auto redPlayer = createPlayer(playerRed, playerRedParameter);
 	auto yellowPlayer = createPlayer(playerYellow, playerYellowParameter);

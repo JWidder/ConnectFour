@@ -2,20 +2,21 @@
 
 bool NeuralNet::instanceFlag = false;
 NeuralNet* NeuralNet::single = NULL;
-NeuralNet* NeuralNet::getInstance(const char *yellowNet, const char *redNet)
+NeuralNet* NeuralNet::getInstance(std::string netName)
 {
 	if (!instanceFlag)
 	{
+		char *tempNetName = new char[netName.length() + 1];
+		strcpy(tempNetName, netName.c_str());
 		// Open the neural net
 		int count = _MB_GetNetCount();
-		auto test = _MB_LoadNet(yellowNet);
+		auto test = _MB_LoadNet(tempNetName);
 		_MB_AddNet();
 		count = _MB_GetNetCount();
-		_MB_SelectNet(1);
-		test = _MB_LoadNet(redNet);
 
 		single = new NeuralNet();
 		instanceFlag = true;
+		delete[] tempNetName;
 		return single;
 	}
 	else
@@ -29,7 +30,7 @@ int NeuralNet::getNextPosition(int player, const tlCF::BitBoard & board, std::ve
 	double maxWert = std::numeric_limits<double>::min();
 	int maxPosition = std::numeric_limits<int>::min();
 
-	auto test = _MB_SelectNet(player - 1);
+	auto test = _MB_SelectNet(0);
 	for (int rowCount = 0; rowCount < board.row_count; rowCount++)
 	{
 		for (int columnCount = 0; columnCount < board.collumn_count; columnCount++)
@@ -54,6 +55,5 @@ int NeuralNet::getNextPosition(int player, const tlCF::BitBoard & board, std::ve
 			}
 		}
 	}
-	// int position = _MB_GetOutputWinnerNeuron();
 	return maxPosition;
 }

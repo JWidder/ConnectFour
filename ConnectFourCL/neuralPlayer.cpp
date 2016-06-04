@@ -6,13 +6,13 @@
 #include "ConnectFour.hpp"
 
 #include <sstream>
+#include <string>
 #include <thread>
 #include <chrono>
 
-tlCF::NeuralPlayer::NeuralPlayer()
-	/*: engine_(dev_())*/ {
-	position = 0;
-	neuralNet = NeuralNet::getInstance("C:\\work\\ConnectFour\\NeuralNets\\net01_yellow.mbn","C:\\work\\ConnectFour\\NeuralNets\\net01_red.mbn");
+tlCF::NeuralPlayer::NeuralPlayer(std::string netName)
+{
+	neuralNet = NeuralNet::getInstance(netName);
 }
 
 std::future<unsigned char> tlCF::NeuralPlayer::Play_Impl(BoardFieldStatus color, const BitBoard & board) {

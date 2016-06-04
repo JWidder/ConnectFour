@@ -15,7 +15,7 @@ private:
 		//private constructor
 	}
 public:
-	static NeuralNet* getInstance(const char *yellowNet,const char *redNet);
+	static NeuralNet* getInstance(std::string netName);
 	int getNextPosition(int player, const tlCF::BitBoard & board, std::vector<bool> *status);
 	~NeuralNet()
 	{
