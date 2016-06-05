@@ -140,7 +140,7 @@ void MonteCarlo_SingleThreaded_SimulationCountStrategy(tlCF::BoardFieldStatus co
     }
     //start a cycle, simulating only valid slots
     for (auto slot : eligible_slots) {
-        for (int i = 0; i < simulations_per_slot; ++i) {
+        for (unsigned int i = 0; i < simulations_per_slot; ++i) {
             auto simulation_board = startposition;
             auto stone = color;
             simulation_board.ThrowIn(slot, stone);

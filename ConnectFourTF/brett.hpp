@@ -8,9 +8,8 @@ namespace std
 {
 	class brett
 	{
-	private:
-
-		// int drawModul;
+	protected:
+		
 		int xLen;
 		int yLen;
 		int _winner;
@@ -20,14 +19,15 @@ namespace std
 
 	public:
 
+		brett() { ; }
 		brett(int xLen, int yLen);
-		void addButton(int spalte, int wert);
-		void addButton(int status);
-		void setWinner(int winner);
+		virtual void addButton(int spalte, int wert);
+		virtual void addButton(int status);
+		virtual void setWinner(int winner);
 
-		int getCountSnapshots();
-		vector<int>getInput(int pos);
-		vector<int>getOutput(int pos);
-		void outputTrainingString(patternOutput * _patternOutput, int player);
+		virtual int getCountSnapshots();
+		virtual vector<int>getInput(int pos);
+		virtual vector<int>getOutput(int pos);
+		virtual void outputTrainingString(patternOutput * _patternOutput, int player);
 	};
 }

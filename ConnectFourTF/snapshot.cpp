@@ -41,9 +41,6 @@ void snapshot::addButton(int spalte, int player)
 		{
 			player = player + 1;
 			snapshotBoard[position] = player;
-			snapshotVertical[position] = checkVertical(player, row, spalte);
-			snapshotVertical[position] = checkLeft(player,row, spalte);
-			snapshotVertical[position] = checkRight(player,row, spalte);
 			return;
 		}
 	}
@@ -89,96 +86,6 @@ vector<int> *std::snapshot::getModulData()
 	return &snapshotOutput;
 }
 
-double std::snapshot::checkVertical(int player,int column, int row)
-{
-	if ((row + 4) >= yLen) {
-		return -1.0;
-	}
-	player = player + 1;
-	double wert = 0.25;
-	for (int iCount = 0; iCount < 4; ++iCount)
-	{
-		int position = calculatePosition(row+iCount, column);
-		int positionNext = calculatePosition(row+1+iCount, column);
-		int modulBasis = snapshotBoard[position];
-		int modulNext = snapshotBoard[positionNext];
-		if ((modulBasis == player) && (modulNext == player)) // Sequence of two equal Elements
-		{
-			wert *= 2;
-		}
-		else if ((modulBasis == player) && (modulNext == 0)) // Filling sequence possible
-		{
-			break;
-		}
-		else
-		{
-			wert = 0;
-			break;
-		}
-	}
-	return wert;
-}
-
-double std::snapshot::checkLeft(int player, int column, int row)
-{
-	if ((row + 4) >= yLen) {
-		return -1.0;
-	}
-	if (column <3) {
-		return -1.0;
-	}
-	double wert = 0.25;
-	for (int iCount = 0; iCount < 4; ++iCount)
-	{
-		int position = calculatePosition(row, column);
-		int positionNext = calculatePosition(row + 1, column-1);
-		int modulBasis = snapshotBoard[position];
-		int modulNext = snapshotBoard[positionNext];
-		if ((modulBasis == player) && (modulNext == player))
-		{
-			wert *= 2;
-		}
-		else if ((modulBasis == player) && (modulBasis == player))
-		{
-			break;
-		}
-		else
-		{
-			wert = 0;
-			break;
-		}
-	}
-	return wert;
-}
-
-double std::snapshot::checkRight(int player, int column, int row)
-{
-	if ((row + 4) >= yLen) {
-		return -1.0;
-	}
-	double wert = 0.25;
-	for (int iCount = 0; iCount < 4; ++iCount)
-	{
-		int position = calculatePosition(row, column);
-		int positionNext = calculatePosition(row + 1, column);
-		int modulBasis = snapshotBoard[position];
-		int modulNext = snapshotBoard[positionNext];
-		if ((modulBasis == player) && (modulNext == player))
-		{
-			wert *= 2;
-		}
-		else if ((modulBasis == player) && (modulBasis == player))
-		{
-			break;
-		}
-		else
-		{
-			wert = 0;
-			break;
-		}
-	}
-	return wert;
-}
 
 double std::snapshot::checkDirection(searchDirection direction, int player, int column, int row)
 {
@@ -195,15 +102,15 @@ double std::snapshot::checkDirection(searchDirection direction, int player, int 
 		_stepVertical=1;
 		_stepHorizontal=0;
 		break;
-	case left:
-		if ((row + 4) >= yLen) {
+	case links:
+		if (column < 4) {
 			return -1.0;
 		}
 		_stepVertical = 1;
 		_stepHorizontal = -1;
 		break;
-	case right:
-		if ((row + 4) >= yLen) {
+	case rechts:
+		if ((column + 3)>xLen) {
 			return -1.0;
 		}
 		_stepVertical = 1;
@@ -216,7 +123,7 @@ double std::snapshot::checkDirection(searchDirection direction, int player, int 
 	for (int iCount = 0; iCount < 4; ++iCount)
 	{
 		int position = calculatePosition(row, column);
-		int positionNext = calculatePosition(row + 1, column);
+		int positionNext = calculatePosition(row + _stepVertical, column+_stepHorizontal);
 		int modulBasis = snapshotBoard[position];
 		int modulNext = snapshotBoard[positionNext];
 		if ((modulBasis == player) && (modulNext == player))

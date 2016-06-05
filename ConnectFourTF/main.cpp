@@ -10,7 +10,7 @@
 #include <map>
 
 #include "patternOutput.hpp"
-#include "brett.hpp"
+#include "brettBasis.hpp"
 #include "ConnectFour.hpp"
 #include "IniFile.h"
 
@@ -19,19 +19,6 @@ using namespace std;
 	int main(int argc, char *argv[]) {
 
 		snapshot _snapshot = snapshot(7, 6);
-		_snapshot.addButton(0, 1);
-		double test = _snapshot.checkVertical(1, 0, 0);
-		_snapshot.addButton(0, 0);
-		test = _snapshot.checkVertical(1, 0, 0);
-
-		_snapshot.addButton(1, 1);
-		test = _snapshot.checkVertical(1, 1, 0);
-		_snapshot.addButton(1, 1);
-		test = _snapshot.checkVertical(1, 1, 0);
-		_snapshot.addButton(1, 1);
-		test = _snapshot.checkVertical(1, 1, 0);
-		_snapshot.addButton(1, 2);
-		test = _snapshot.checkVertical(1, 1, 0);
 
 		CIniFile _iniFile = CIniFile();
 
@@ -48,8 +35,8 @@ using namespace std;
 
 		string line = "";
 		while (getline(infile, line)) {
-			brett tempBrett = brett(7, 6);
-			int spieler = 0;
+			brett tempBrett = brettBasis(7, 6);
+			int _player = 0;
 			stringstream strstr(line);
 
 			string number = "";
@@ -70,9 +57,8 @@ using namespace std;
 					int position = stoi(word);
 					if (position < 255)
 					{
-						tempBrett.addButton(position, spieler);
-						spieler++;
-						spieler = spieler % 2;
+						tempBrett.addButton(position, _player);
+						_player = (_player+1) % 2;
 						eingabe[iCount] = stoi(word);
 					}
 					else

@@ -3,7 +3,7 @@
 
 namespace std
 {
-	enum searchDirection {vertical, left, right};
+	enum searchDirection {vertical, links, rechts};
 
 	class snapshot
 	{
@@ -32,9 +32,6 @@ namespace std
 		int getPlayer();
 		vector<int> *getBoardData();
 		vector<int> *getModulData();
-		double checkVertical(int player, int column, int row);
-		double checkLeft(int player, int column, int row);
-		double checkRight(int player, int column, int row);
 		double checkDirection(searchDirection direction, int player, int column, int row);
 	};
 }

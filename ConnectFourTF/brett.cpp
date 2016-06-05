@@ -41,7 +41,7 @@ namespace std
 
 	int brett::getCountSnapshots()
 	{
-		return werte.size();
+		return (int)werte.size();
 	}
 
 	vector<int> brett::getInput(int pos)
