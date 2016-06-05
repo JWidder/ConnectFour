@@ -3,6 +3,8 @@
 
 namespace std
 {
+	enum searchDirection {vertical, left, right};
+
 	class snapshot
 	{
 	private:
@@ -13,10 +15,15 @@ namespace std
 		int _player;
 		vector<int> snapshotBoard;
 		vector<int> snapshotOutput;
+		vector<int> snapshotVertical;
+		vector<int> snapshotLeft;
+		vector<int> snapshotRight;
+
+		int calculatePosition(int row,int column);
 	public:
 		snapshot(int xLen,int yLen);
 		snapshot(const snapshot & snapshot);
-		void addButton(int xWert, int yWert);
+		void addButton(int column, int player);
 		vector<int>getBoardOutput();
 		vector<int>getBoardInput();
 		void setModule(int button);
@@ -25,5 +32,9 @@ namespace std
 		int getPlayer();
 		vector<int> *getBoardData();
 		vector<int> *getModulData();
+		double checkVertical(int player, int column, int row);
+		double checkLeft(int player, int column, int row);
+		double checkRight(int player, int column, int row);
+		double checkDirection(searchDirection direction, int player, int column, int row);
 	};
 }

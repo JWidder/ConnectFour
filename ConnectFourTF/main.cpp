@@ -17,6 +17,22 @@
 using namespace std;
 
 	int main(int argc, char *argv[]) {
+
+		snapshot _snapshot = snapshot(7, 6);
+		_snapshot.addButton(0, 1);
+		double test = _snapshot.checkVertical(1, 0, 0);
+		_snapshot.addButton(0, 0);
+		test = _snapshot.checkVertical(1, 0, 0);
+
+		_snapshot.addButton(1, 1);
+		test = _snapshot.checkVertical(1, 1, 0);
+		_snapshot.addButton(1, 1);
+		test = _snapshot.checkVertical(1, 1, 0);
+		_snapshot.addButton(1, 1);
+		test = _snapshot.checkVertical(1, 1, 0);
+		_snapshot.addButton(1, 2);
+		test = _snapshot.checkVertical(1, 1, 0);
+
 		CIniFile _iniFile = CIniFile();
 
 		auto wert = _iniFile.GetRecord("TrainingDataYellow", "Training", argv[1]);
