@@ -16,7 +16,7 @@ private:
 	}
 public:
 	static NeuralNet* getInstance(std::string netName);
-	int getNextPosition(int player, const tlCF::BitBoard & board, std::vector<bool> *status);
+	int getNextPosition(int player, const tlCF::BitBoard & board, std::vector<bool> &status);
 	~NeuralNet()
 	{
 		instanceFlag = false;

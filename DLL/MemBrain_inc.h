@@ -380,7 +380,11 @@ extern "C" {
 
 
 /// Definition of the MemBrain integer as 32 bit integer
-typedef long int _MB_INT;
+#ifdef USED_BY_ORIGIN
+    typedef long _MB_INT;
+#else
+    typedef long int _MB_INT;
+#endif
 
 #ifndef BOOL
     typedef int    BOOL;
@@ -433,6 +437,14 @@ typedef enum
 
 } EMBActFunc;
 
+// possible input functions
+typedef enum
+{
+    MB_IF_SUM = 0,
+    MB_IF_MUL = 1,
+
+} EMBInputFunc;
+
 
 /// possible output ranges
 typedef enum 
@@ -449,6 +461,7 @@ typedef enum
 typedef struct
 {
     double act;
+    _MB_INT inputFunc;                      // see EMBInputFunc
     _MB_INT actFunc;                        // see EMBActFunc
     double actThres;
     BOOL lockActThres;
@@ -490,10 +503,26 @@ typedef struct
 #ifndef _USRDLL
 #define _USRDLL 0
     // General DLL declaration macro
-#define MB_DLL_RETURN(retType) retType __declspec(dllimport) __stdcall
+#ifdef _NO_STDCALL
+    #ifdef USED_BY_ORIGIN
+        #define MB_DLL_RETURN(retType) retType        
+    #else
+        #define MB_DLL_RETURN(retType) retType __declspec(dllimport)   
+    #endif
 #else
+    #ifdef USED_BY_ORIGIN
+        #define MB_DLL_RETURN(retType) retType __stdcall
+    #else
+        #define MB_DLL_RETURN(retType) retType __declspec(dllimport) __stdcall
+    #endif
+#endif
+#else
+    #ifdef _NO_STDCALL
     // General DLL declaration macro
-#define MB_DLL_RETURN(retType) retType __declspec(dllexport) __stdcall
+        #define MB_DLL_RETURN(retType) retType __declspec(dllexport)
+    #else
+        #define MB_DLL_RETURN(retType) retType __declspec(dllexport) __stdcall
+    #endif
 #endif
 
 
@@ -561,14 +590,20 @@ MB_DLL_RETURN(EMBRetVal) _MB_GetOutputAct(_MB_INT idx, double* pAct);
 MB_DLL_RETURN(EMBRetVal) _MB_GetOutputOut(_MB_INT idx, double* pOutVal);
 
 /// Get index of the last output winner neuron of the net. Return -1 if unknown. Else
-/// return the output neuron  index of the winner neuron.
+/// return the output neuron index of the winner neuron.
 MB_DLL_RETURN(_MB_INT) _MB_GetOutputWinnerNeuron(void);
 
 /// Get the activation range of the input neuron at index <idx>.
+/// Note: For neurons with AF_IDENTICAL the normalization limits are returned if the neuron uses
+/// normalization. Still AF_IDENTICAL can handel activations outside this range. All other
+/// actuvatuion functions are limiting the activation values.
 MB_DLL_RETURN(EMBRetVal) _MB_GetInputActRange(_MB_INT idx, double* pActMin,
     double* pActMax);
 
 /// Get the activation range of the output neuron at index <idx>.
+/// Note: For neurons with AF_IDENTICAL the normalization limits are returned if the neuron uses
+/// normalization. Still AF_IDENTICAL can handel activations outside this range. All other
+/// actuvatuion functions are limiting the activation values.
 MB_DLL_RETURN(EMBRetVal) _MB_GetOutputActRange(_MB_INT idx, double* pActMin,
     double* pActMax);
 
@@ -790,7 +825,7 @@ MB_DLL_RETURN(void) _MB_RandomizeNet(void);
 MB_DLL_RETURN(double) _MB_GetLastNetError(void);
 
 /// Create an FFT lesson from the currently active lesson
-MB_DLL_RETURN(EMBRetVal) _MB_CreateFftLesson(BOOL complex, BOOL inputsAreColumns, _MB_INT minFreqIdx, _MB_INT maxFreqPoints);
+MB_DLL_RETURN(EMBRetVal) _MB_CreateFftLesson(BOOL isComplex, BOOL inputsAreColumns, _MB_INT minFreqIdx, _MB_INT maxFreqPoints);
 
 /// Get frequency that corresponds to a frequency index in an FFT
 MB_DLL_RETURN(double) _MB_GetFftFrequency(_MB_INT freqIdx, double overallSampleTime);

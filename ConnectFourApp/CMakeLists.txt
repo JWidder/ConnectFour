@@ -16,4 +16,4 @@ set(SOURCES main.cpp MainWindow.cpp Board.cpp Database.cpp)
 set(HEADERS MainWindow.h Board.h Database.h)
 
 add_executable(ConnectFourApp WIN32 ${SOURCES} ${HEADERS})
-target_link_libraries(ConnectFourApp ConnectFour Qt5::Widgets Qt5::Core Qt5::Gui Qt5::Sql)
+target_link_libraries(ConnectFourApp ConnectFour Qt5::Widgets Qt5::Core Qt5::Gui Qt5::Sql MemBrainDll64.lib)

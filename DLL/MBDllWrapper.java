@@ -73,6 +73,11 @@ public class MBDllWrapper
 	public static int MB_TR_NET_ERR_LESSON_EMPTY = 9;				///< Net error lesson is emtpy
 	public static int MB_TR_NET_ERR_NOT_IN_SYNC = 10;				///< Net error lesson is not in sync with the net
 	
+	
+	/// Possible input functions
+	public static int MB_IF_SUM = 0;
+	public static int MB_IF_MUL = 1;
+	
 	/// Possible activation functions
    	public static int MB_AF_LOGISTIC = 0;
 	public static int MB_AF_IDENTICAL = 1;
@@ -89,6 +94,7 @@ public class MBDllWrapper
     public static class MBNeuronProp
     {
         public double act;
+        public int inputFunc;                      		// see valid constant definitions above
         public int actFunc;                      		// see valid constant definitions above
         public double actThres;
         public boolean lockActThres;

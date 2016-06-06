@@ -11,6 +11,7 @@
 
 #include "ConnectFour.hpp"
 #include "Players.hpp"
+#include "NeuralPlayer.hpp"
 
 
 MainWindow::MainWindow() {
@@ -18,7 +19,8 @@ MainWindow::MainWindow() {
     players_.push_back(std::make_shared<tlCF::RandomPlayer>());
     players_.push_back(std::make_shared<tlCF::MonteCarlo_SingleThreaded>(2000));
     players_.push_back(std::make_shared<tlCF::MonteCarlo_SingleThreaded>(500));
-    players_.push_back(std::make_shared<tlCF::MonteCarlo_SingleThreaded>(8000, tlCF::MonteCarlo_SingleThreadedStrategy::SimulationCount));
+	players_.push_back(std::make_shared<tlCF::MonteCarlo_SingleThreaded>(8000, tlCF::MonteCarlo_SingleThreadedStrategy::SimulationCount));
+	players_.push_back(std::make_shared<tlCF::NeuralPlayer>("C:\\work\\ConnectFour\\NeuralNetwork\\net01_red.mbn"));
 
     QWidget* ui_area = new QWidget(this);
     setCentralWidget(ui_area);

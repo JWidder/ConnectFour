@@ -16,11 +16,11 @@ tlCF::NeuralPlayer::NeuralPlayer(std::string netName)
 }
 
 std::future<unsigned char> tlCF::NeuralPlayer::Play_Impl(BoardFieldStatus color, const BitBoard & board) {
-	std::vector<bool> *statusThrow = new std::vector<bool>(board.collumn_count);
+	std::vector<bool> statusThrow = std::vector<bool>(board.collumn_count);
 	int count = 0;
 	for (int columnCount = 0; columnCount < board.collumn_count; columnCount++)
 	{
-		(*statusThrow)[columnCount] = board.CanThrowIn(columnCount);
+		statusThrow[columnCount] = board.CanThrowIn(columnCount);
 		count++;
 	}
 	if (count == 0)

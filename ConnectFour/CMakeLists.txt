@@ -1,7 +1,7 @@
 
-SET(SOURCES ConnectFour.cpp Players.cpp)
+SET(SOURCES ConnectFour.cpp Players.cpp NeuralPlayer.cpp NeuralNet.cpp)
 SET(HEADERS gsl_assert.h)
-SET(PUBLIC Public/ConnectFour.hpp Public/Players.hpp)
+SET(PUBLIC Public/ConnectFour.hpp Public/Players.hpp Public/NeuralPlayer.hpp Public/NeuralNet.hpp)
 
 add_library(ConnectFour ${SOURCES} ${HEADERS} ${PUBLIC})
 target_include_directories(ConnectFour

@@ -10,8 +10,7 @@ NeuralNet* NeuralNet::getInstance(std::string netName)
 		strcpy(tempNetName, netName.c_str());
 		// Open the neural net
 		int count = _MB_GetNetCount();
-		auto test = _MB_LoadNet(tempNetName);
-		_MB_AddNet();
+		auto test = _MB_LoadNet("C:\\work\\ConnectFour\\NeuralNetwork\\net01_red.mbn");
 		count = _MB_GetNetCount();
 
 		single = new NeuralNet();
@@ -25,7 +24,7 @@ NeuralNet* NeuralNet::getInstance(std::string netName)
 	}
 }
 
-int NeuralNet::getNextPosition(int player, const tlCF::BitBoard & board, std::vector<bool> *status)
+int NeuralNet::getNextPosition(int player, const tlCF::BitBoard & board, std::vector<bool> &status)
 {
 	double maxWert = std::numeric_limits<double>::min();
 	int maxPosition = std::numeric_limits<int>::min();
@@ -46,9 +45,9 @@ int NeuralNet::getNextPosition(int player, const tlCF::BitBoard & board, std::ve
 	{
 		double value;
 		_MB_GetOutputOut(columnCount, &value);
-		if ((*status)[columnCount])
+		if (status[columnCount])
 		{
-			if (value < maxWert)
+			if (value > maxWert)
 			{
 				maxWert = value;
 				maxPosition = columnCount;

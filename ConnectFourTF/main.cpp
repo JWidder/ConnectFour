@@ -47,7 +47,6 @@ using namespace std;
 			tempBrett.setWinner(stoi(winner));
 
 			// Analyse result data
-			int eingabe[42];
 			string word = "";
 			int iCount = 0;
 			while (getline(strstr, word, ';'))
@@ -59,7 +58,6 @@ using namespace std;
 					{
 						tempBrett.addButton(position, _player);
 						_player = (_player+1) % 2;
-						eingabe[iCount] = stoi(word);
 					}
 					else
 					{

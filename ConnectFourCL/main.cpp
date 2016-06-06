@@ -32,7 +32,7 @@ std::shared_ptr<tlCF::Player> createPlayer(string name, string parameter)
 	}
 	else if (name == "Neural")
 	{
-		tempPlayer = std::make_shared<tlCF::NeuralPlayer>();
+		tempPlayer = std::make_shared<tlCF::NeuralPlayer>(parameter);
 	}
 	else
 	{
@@ -46,6 +46,7 @@ std::shared_ptr<tlCF::Player> createPlayer(string name, string parameter)
 int main(int argc, char *argv[]) 
 {
 	CIniFile _iniFile = CIniFile();
+	auto testneu = _iniFile.GetRecord("Number", "Simulation_01", argv[1])[0].Value;
 	int anzWerte = stoi(_iniFile.GetRecord("Number", "Simulation_01", argv[1])[0].Value);
 	
 	outputResult _outputResult = outputResult(&_iniFile.GetRecord("SimulationOutput", "Simulation_01", argv[1])[0].Value);
